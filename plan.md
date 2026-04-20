@@ -96,6 +96,48 @@ End Sub
 - 1 ファイルあたり 20〜30 行程度に抑え、アサーション密度より網羅性を優先
 - `tree-sitter highlight -n <番号>` で個別確認しながら追加 (一括実行コマンドは要調査)
 
+## Phase 1 完了宣言 (2026-04-21)
+
+| 指標 | 値 |
+|------|-----|
+| highlight fixture ファイル数 | 14 |
+| アサーション数 | 199 |
+| カバー済み主要領域 | basics / operators / keywords / control_flow / procedures / comments / declarations / types / literals / with_blocks / error_handling / module_attributes / preprocessor |
+
+全 14 fixture が green。nvim-treesitter キャプチャ名規約に準拠した `highlights.scm` で VBA の主要言語機能を網羅。
+
+---
+
+## Phase 2 候補
+
+### (A) `queries/locals.scm` 整備 ★推奨
+スコープ解析・definition/reference tracking を追加。
+- `@local.scope`: `sub_declaration`, `function_declaration`, `property_declaration`
+- `@local.definition`: 変数・パラメータ・定数名
+- `@local.reference`: 式中の `identifier`
+- **効果**: LSP と相補的。エディタ (nvim-treesitter) の go-to-definition / rename / highlight-on-cursor が機能する。
+
+### (B) `queries/injections.scm`
+コメント内の SQL / HTML / Markdown を外部文法で injection。
+- `(comment)` ノードに `@injection.content` + `@injection.language`
+- **効果**: SQL 文字列ハイライトなど多言語埋め込みが有効になる。現状 VBA での利用頻度は限定的。
+
+### (C) `queries/textobjects.scm`
+nvim-treesitter-textobjects プラグイン対応。
+- `@function.outer` / `@function.inner`: `sub_declaration`, `function_declaration`
+- `@class.outer` / `@class.inner`: `type_declaration`, `enum_declaration`
+- **効果**: `vif` (inner function) などのテキストオブジェクトが使える。
+
+### (D) corpus test/ 文法レベルテスト拡充
+- `test/corpus/` に未カバーパターン (ネスト `With`, `Enum` 値式, `Declare` エラー系) を追加。
+- 現状 45 テスト。20 件追加目標。
+
+### (E) fixture 優先度バグ解消
+- `with_blocks.bas` の `With` ブロック内プロパティが `@variable` にフォールバックしている箇所を `@property` に修正。
+- `highlights.scm` でキャプチャ順を調整し、`leading_dot_member_access` の property を優先。
+
+---
+
 ## 参考仕様
 - VBA Language Specification (Microsoft [MS-VBAL])
 - tree-sitter docs (https://tree-sitter.github.io/tree-sitter/)
