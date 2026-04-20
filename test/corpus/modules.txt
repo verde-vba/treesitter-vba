@@ -1,0 +1,172 @@
+==================
+Class module field and property
+==================
+
+Attribute VB_Name = "Shape"
+Option Explicit
+
+Private mName As String
+
+Public Property Get Name() As String
+    Name = mName
+End Property
+
+---
+
+(source_file
+  (attribute_stmt
+    name: (identifier)
+    value: (literal
+      (string_literal)))
+  (option_stmt)
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      type: (builtin_type)))
+  (property_declaration
+    visibility: (visibility)
+    accessor: (accessor)
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (builtin_type)
+    body: (statement_block
+      (assignment
+        target: (identifier)
+        value: (identifier)))))
+
+==================
+Event handler sub with If/Else
+==================
+
+Private Sub CommandButton1_Click()
+    If Me.TextBox1.Text = "" Then
+        MsgBox "empty"
+    Else
+        MsgBox "ok"
+    End If
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    visibility: (visibility)
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (if_statement
+        condition: (binary_expression
+          left: (member_access
+            object: (member_access
+              object: (me_expression)
+              property: (identifier))
+            property: (identifier))
+          right: (literal
+            (string_literal)))
+        consequence: (statement_block
+          (paren_less_call
+            function: (identifier)
+            arguments: (paren_less_argument_list
+              (literal
+                (string_literal)))))
+        alternative: (statement_block
+          (paren_less_call
+            function: (identifier)
+            arguments: (paren_less_argument_list
+              (literal
+                (string_literal)))))))))
+
+==================
+On Error GoTo with label and Resume
+==================
+
+Sub DoWork()
+    On Error GoTo ErrHandler
+    Exit Sub
+ErrHandler:
+    MsgBox Err.Description
+    Resume Next
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (on_error_statement
+        (identifier))
+      (exit_statement)
+      (label
+        name: (identifier))
+      (paren_less_call
+        function: (identifier)
+        arguments: (paren_less_argument_list
+          (member_access
+            object: (identifier)
+            property: (identifier))))
+      (resume_statement))))
+
+==================
+With block using leading dot member access
+==================
+
+Sub Init()
+    With Me.TextBox1
+        .Text = ""
+        .Enabled = True
+    End With
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (with_statement
+        object: (member_access
+          object: (me_expression)
+          property: (identifier))
+        body: (statement_block
+          (assignment
+            target: (leading_dot_member_access
+              property: (identifier))
+            value: (literal
+              (string_literal)))
+          (assignment
+            target: (leading_dot_member_access
+              property: (identifier))
+            value: (literal
+              (boolean_literal))))))))
+
+==================
+Paren-less MsgBox and Debug.Print calls
+==================
+
+Sub Greet()
+    MsgBox "Hello"
+    Debug.Print "world"
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (paren_less_call
+        function: (identifier)
+        arguments: (paren_less_argument_list
+          (literal
+            (string_literal))))
+      (paren_less_call
+        function: (member_access
+          object: (identifier)
+          property: (identifier))
+        arguments: (paren_less_argument_list
+          (literal
+            (string_literal)))))))
