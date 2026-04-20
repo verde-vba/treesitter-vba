@@ -1,6 +1,6 @@
 Sub Greet()
 ' <- @keyword
-'    ^ @variable
+'    ^ @function
     Dim x As Integer
 '   ^ @keyword
 '       ^ @variable
@@ -11,7 +11,7 @@ End Sub
 '   ^ @keyword
 Function Calc() As Long
 ' <- @keyword
-'         ^ @variable
+'         ^ @function
 '               ^ @keyword
 '                  ^ @type.builtin
 End Function

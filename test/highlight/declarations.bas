@@ -8,7 +8,7 @@ Private y As String
 
 Const MAX_SIZE = 100
 ' <- @keyword
-'     ^ @variable
+'     ^ @constant
 
 Sub TestDecl()
 ' <- @keyword

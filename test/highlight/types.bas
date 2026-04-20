@@ -1,8 +1,8 @@
 Type MyPoint
 ' <- @keyword
-'    ^ @variable
+'    ^ @type
     X As Long
-'   ^ @variable
+'   ^ @property
 '     ^ @keyword
 '        ^ @type.builtin
     Y As String
@@ -14,7 +14,7 @@ End Type
 Enum Direction
 ' <- @keyword
     North = 1
-'   ^ @variable
+'   ^ @constant
 '           ^ @number
 End Enum
 ' <- @keyword

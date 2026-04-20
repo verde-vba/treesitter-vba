@@ -4,13 +4,13 @@ Sub TestWith()
 '   ^ @keyword
 '        ^ @variable
         .Name = "Hello"
-'        ^ @variable
+'        ^ @property
 '                ^ @string
         .Count = 5
-'        ^ @variable
+'        ^ @property
 '                ^ @number
         .Enabled = True
-'        ^ @variable
+'        ^ @property
 '                   ^ @constant.builtin
     End With
 '   ^ @keyword
