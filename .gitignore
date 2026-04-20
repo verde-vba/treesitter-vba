@@ -7,3 +7,6 @@ src/grammar.json
 src/node-types.json
 *.wasm
 .DS_Store
+target/
+*.node
+Cargo.lock
