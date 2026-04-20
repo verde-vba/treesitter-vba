@@ -31,6 +31,10 @@
 (const_declaration
   name: (identifier) @local.definition.constant)
 
+; Definitions: preprocessor constants (module-wide syntactic scope)
+(preprocessor_const
+  name: (identifier) @local.definition.constant)
+
 ; Definitions: types
 (type_declaration
   name: (identifier) @local.definition.type)

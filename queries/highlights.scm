@@ -69,6 +69,17 @@
 
 (comment) @comment
 
+; Preprocessor directives
+[
+  "#If" "#ElseIf" "#Else" "#End" "#Const"
+] @keyword.directive
+
+(preprocessor_const
+  name: (identifier) @variable)
+
+(preprocessor_if
+  condition: (_) @expression)
+
 ; Punctuation
 [ "(" ")" "," "." ":" ] @punctuation.delimiter
 [ "=" "+" "-" "*" "/" "\\" "^" "&" "<" ">" "<=" ">=" "<>" ":=" ] @operator

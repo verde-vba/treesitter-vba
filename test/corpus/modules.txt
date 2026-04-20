@@ -170,3 +170,52 @@ End Sub
         arguments: (paren_less_argument_list
           (literal
             (string_literal)))))))
+
+==================
+Preprocessor #Const
+==================
+
+#Const DEBUG_MODE = 1
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_const
+      name: (identifier)
+      value: (literal
+        (integer_literal)))))
+
+==================
+Preprocessor #If/#ElseIf/#Else/#End If with nested body
+==================
+
+#If VBA7 Then
+    Dim x As LongPtr
+#ElseIf Win64 Then
+    Dim x As Long
+#Else
+    Dim x As Integer
+#End If
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_if
+      condition: (identifier)
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (builtin_type)))
+      (preprocessor_elseif
+        condition: (identifier)
+        (variable_declaration
+          (variable_declarator
+            name: (identifier)
+            type: (builtin_type))))
+      (preprocessor_else
+        (variable_declaration
+          (variable_declarator
+            name: (identifier)
+            type: (builtin_type)))))))

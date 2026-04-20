@@ -18,6 +18,14 @@ function kw(word) {
   return alias(token(ci(word)), word);
 }
 
+/**
+ * Preprocessor keyword token (e.g. `#If`, `#Const`). `#` is matched literally
+ * and the keyword body is case-insensitive. Aliased to `#Word` in the AST.
+ */
+function kwSharp(word) {
+  return alias(token(seq('#', ci(word))), '#' + word);
+}
+
 const PREC = {
   imp: 1,
   eqv: 2,
@@ -68,6 +76,7 @@ module.exports = grammar({
         $.attribute_stmt,
         $.option_stmt,
         $._declaration,
+        $.preprocessor_directive,
       ),
 
     _declaration: ($) =>
@@ -97,6 +106,55 @@ module.exports = grammar({
           kw('Private'),
         ),
       ),
+
+    // ─── Preprocessor directives ──────────────────────────────────────
+    //
+    // VBA's conditional compilation directives (`#If` / `#ElseIf` / `#Else`
+    // / `#End If`) and `#Const`. They appear at the same syntactic level
+    // as declarations and statements, and may wrap either, so the inner
+    // body is a synthetic `_preprocessor_body_item` choice covering both
+    // module-level items and procedure-level statements.
+
+    preprocessor_directive: ($) => choice($.preprocessor_const, $.preprocessor_if),
+
+    preprocessor_const: ($) =>
+      seq(kwSharp('Const'), field('name', $.identifier), '=', field('value', $._expression)),
+
+    preprocessor_if: ($) =>
+      seq(
+        kwSharp('If'),
+        field('condition', $._expression),
+        kw('Then'),
+        $._terminator,
+        repeat(seq($._preprocessor_body_item, $._terminator)),
+        repeat($.preprocessor_elseif),
+        optional($.preprocessor_else),
+        kwSharp('End'),
+        kw('If'),
+      ),
+
+    preprocessor_elseif: ($) =>
+      seq(
+        kwSharp('ElseIf'),
+        field('condition', $._expression),
+        kw('Then'),
+        $._terminator,
+        repeat(seq($._preprocessor_body_item, $._terminator)),
+      ),
+
+    preprocessor_else: ($) =>
+      seq(
+        kwSharp('Else'),
+        $._terminator,
+        repeat(seq($._preprocessor_body_item, $._terminator)),
+      ),
+
+    // Happy-path scope: body items are statements. `_statement` already
+    // includes `variable_declaration`, `const_declaration`, and nested
+    // `preprocessor_directive`, which covers the typical `#If VBA7`
+    // compatibility shim and conditional constants. Full procedure
+    // declarations inside `#If` are deferred to a later iteration.
+    _preprocessor_body_item: ($) => $._statement,
 
     // ─── Procedure declarations ────────────────────────────────────────
 
@@ -312,6 +370,7 @@ module.exports = grammar({
         $.assignment,
         $.paren_less_call,
         $._expression_statement,
+        $.preprocessor_directive,
       ),
 
     paren_less_call: ($) =>
