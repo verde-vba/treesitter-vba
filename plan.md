@@ -613,3 +613,65 @@ End Function
 
 **判定: 部分達成** — upgrade と regression ゼロは確認。locals 復活は upstream 修正待ち継続。
 
+---
+
+## Phase 3 Sprint 5 (WithEvents + GoSub/Return highlight fixture 追加) 完了記録 (2026-04-21)
+
+### Sprint Goal
+既存 grammar 変更なしで highlight fixture を 2 件追加し、`WithEvents` 変数宣言と `GoSub Label → Return` ラベル参照経路の highlight を pin する。
+
+### 実施内容
+
+| 変更 | 詳細 |
+|------|------|
+| `queries/highlights.scm` | `(variable_declarator type: (identifier) @type)` 追加 (user-defined 型名を `@type` に昇格) |
+| `test/highlight/withevents.bas` | highlight fixture 追加 (10 assertions) |
+| `test/highlight/gosub_return.bas` | highlight fixture 追加 (7 assertions) |
+
+**全 fixture green 確認:** corpus 72/72 ✓、highlight 22 ファイル ✓
+
+### probe 結果 (事前確認)
+
+**WithEvents:**
+- `Private WithEvents xlApp As Application` → `variable_declaration` 配下で正常 parse
+- `WithEvents` は既にキーワードリストに登録済み (`highlights.scm` line 8)
+- `Application` 等 user-defined 型名は `variable_declarator type: (identifier)` ノードだが `@type` ルール未登録 → `@variable` にフォールバックしていた
+- `builtin_type` (`Integer`, `String` 等) は別ノード種別のため既存 fixture への影響なし
+
+**GoSub/Return:**
+- `GoSub CleanUp` → `gosub_statement target: (identifier)` が `@variable`
+- `CleanUp:` → `label name: (identifier)` が `@variable`、`:` が `@punctuation.delimiter`
+- `Return` → `return_statement` として `@keyword` ✓ (Sprint 1 で追加済み)
+- 既存 `gosub.bas` は `GoSub`/`Return` @keyword のみ pin; label 定義側と label reference は未 pin → 本 Sprint で追加
+
+### TDD サイクル記録
+- **probe:** `tree-sitter query` で各トークンのキャプチャ名・カラム位置を確認
+- **実装:** `(variable_declarator type: (identifier) @type)` を highlights.scm に追加 (불足 발견)
+- **fixture:** `withevents.bas` (10 assertions) + `gosub_return.bas` (7 assertions) — 一発 green
+
+### Sprint 5 レトロスペクティブ (KPT)
+
+#### Keep
+- `tree-sitter query` で capture text を先に取得 → leading whitespace 込みの capture range vs 視覚的カラムの違いを事前に把握できた
+- builtin_type と identifier の分離を確認してから highlights.scm を変更 → regression ゼロ
+
+#### Problem
+- tree-sitter query の capture start は leading whitespace を含む col を報告するため、fixture `^` 位置 (視覚的先頭列) との差異で混乱しやすい
+
+#### Try (Phase 3 Sprint 6 候補)
+- tree-sitter 0.27+ リリース時に locals runner 修正を再確認 → `test/locals/basics.bas` 復活 (★筆頭: upstream 修正待ち)
+- `label name: (identifier)` を `@label` キャプチャに昇格させる highlight 追加 (現状 `@variable` にフォールバック)
+- `DefType` / `Event` の highlight fixture 追加 (Sprint 3 で grammar 追加済み、fixture は既存)
+
+### 完了判定
+
+| 完了基準 | 状態 |
+|----------|------|
+| corpus 72 件 ✓ | ✅ |
+| highlight 22 ファイル ✓ | ✅ (20 → 22) |
+| `withevents.bas` fixture green | ✅ 10 assertions |
+| `gosub_return.bas` fixture green | ✅ 7 assertions |
+| grammar 変更なし | ✅ |
+
+**判定: 達成** — XS 2 件、2 commit 構成で完了。
+
