@@ -10,6 +10,14 @@
     "visual-basic"
   ],
   "license": "MIT",
+  "files": [
+    "grammar.js",
+    "tree-sitter.json",
+    "binding.gyp",
+    "bindings/node/**",
+    "queries/*.scm",
+    "src/**"
+  ],
   "dependencies": {
     "node-addon-api": "^7.1.0",
     "node-gyp-build": "^4.8.0"
@@ -41,6 +49,15 @@
       ],
       "highlights": [
         "queries/highlights.scm"
+      ],
+      "folds": [
+        "queries/folds.scm"
+      ],
+      "locals": [
+        "queries/locals.scm"
+      ],
+      "indents": [
+        "queries/indents.scm"
       ]
     }
   ]
