@@ -1,4 +1,4 @@
-; regression test for Task A (indents.scm preprocessor coverage)
+; Regression tests for indents.scm preprocessor coverage.
 ;
 ; These corpus tests pin the parse-tree shape for `#If / #ElseIf / #Else /
 ; #End If` blocks so that the companion rules in `queries/indents.scm`

@@ -1,4 +1,5 @@
-; regression test for Task C (highlights.scm @expression narrowing)
+; Regression tests for highlights.scm preprocessor condition narrowing.
+;
 ; Locks in the parse structure relied upon by the @constant captures on
 ; preprocessor_if / preprocessor_elseif conditions.
 
