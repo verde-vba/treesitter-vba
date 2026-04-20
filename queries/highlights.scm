@@ -55,6 +55,7 @@
 
 (implements_statement name: (identifier) @type)
 (event_declaration name: (identifier) @function)
+(variable_declarator type: (identifier) @type)
 
 ; Calls
 (call_expression function: (identifier) @function.call)
