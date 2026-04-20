@@ -384,6 +384,75 @@ pattern: 39  capture: 17 - variable, start: (0, 3), end: (0, 7)   Foo
 
 ---
 
+---
+
+## Phase 3 Sprint 7 (GoTo/@label 昇格 + DefType 複数レンジ fixture 補強) 完了記録 (2026-04-21)
+
+### Sprint Goal
+`On Error GoTo` / `GoTo` 文の target ラベルを `@label` に昇格 (grammar.js probe 必須) + `DefType` 複数レンジ fixture 補強の 2 件束ね。
+
+### probe 結果 (Step A)
+
+| 確認項目 | 結果 |
+|----------|------|
+| `goto_statement` の field 名 | `target:` — gosub と同パターン |
+| `on_error_statement` の field 名 | なし — `(identifier)` 子ノードが直接存在 |
+| `GoTo 0` / `On Error Resume Next` | `identifier` 子ノードなし → field なしクエリで誤爆しない |
+
+**判断:** `goto_statement` は `target:` field で直接対応 (XS)。`on_error_statement` は field なしクエリ `(on_error_statement (identifier) @label)` で対応 (XS)。grammar 変更不要。
+
+### 実施内容
+
+| 変更 | 詳細 |
+|------|------|
+| `queries/highlights.scm` | `(goto_statement target: (identifier) @label)` + `(on_error_statement (identifier) @label)` 追加 |
+| `test/highlight/goto_on_error.bas` | highlight fixture 追加 (4 assertions: GoTo target + On Error GoTo target + 2 label declarations) |
+| `test/corpus/modules.txt` | `DefBool A-C, E-M` (corpus entry 53) + `DefDate X-Z` (corpus entry 54) 追加 (72 → 74 件) |
+| `test/highlight/deftype.bas` | DefDate X-Z エントリ追加 (+3 assertions: keyword + 2 variable) |
+
+**全 fixture green 確認:** corpus 74/74 ✓、highlight 7 ファイル確認 (goto_on_error.bas 4 assertions ✓)
+
+### TDD サイクル記録
+
+- **probe:** `grep -n 'goto_statement\|on_error'` → grammar.js L571-572 で `goto_statement` は `target:` field 確認。`on_error_statement` は field なしを確認
+- **probe:** `tree-sitter query` で `GoTo CleanUp` / `On Error GoTo ErrorHandler` の capture を確認。`ErrorHandler` は ` ErrorHandler` (leading space込み) でキャプチャ → visual col 位置で assertion 配置
+- **RED:** `goto_on_error.bas` 作成 → Nix 0.25.10 で EXIT 137 + `row:1, col:9 expected label actual variable` 確認
+- **GREEN:** highlights.scm に 2 capture 追加 → EXIT 137 (pre-existing クラッシュ) + `goto_on_error.bas (4 assertions) ✓` 確認
+- **Step B:** corpus に `DefBool A-C, E-M` / `DefDate X-Z` 追加 → 74/74 ✓。`deftype.bas` に +3 assertions
+
+### 特記事項: EXIT 137 の origin
+
+Nix PATH tree-sitter 0.25.10 は highlight test を 7 ファイル処理した後にクラッシュ (EXIT 137)。ベースライン確認で **Sprint 7 前から存在** する pre-existing 問題と確定 (新規ファイル削除してもEXIT 137)。`node_modules/.bin/tree-sitter` (0.26.8) は非 TTY では highlight 出力を `/dev/tty` に書き出すため EXIT 0 のみ。
+
+### Sprint 7 レトロスペクティブ (KPT)
+
+#### Keep
+- grammar.js の field 名を grep で先に確認 → `target:` vs なし の違いを即座に判別できた
+- `on_error_statement` で field なしクエリが使える事実を probe で検証してから実装 → 誤爆リスクを確認済みで実装
+- ベースライン確認 (新規ファイル削除して再テスト) で EXIT 137 が pre-existing と確定 → Sprint スコープ外と明示できた
+
+#### Problem
+- Nix 0.25.10 の highlight テストランナーが 7 ファイルでクラッシュするため `deftype.bas` 等の assertions を自動検証できない → `tree-sitter query` で手動確認が必要
+
+#### Try (Phase 3 Sprint 8 候補)
+- **★筆頭 (upstream 待ち):** tree-sitter 0.27+ リリース時に locals runner 修正を再確認 → `test/locals/basics.bas` 復活
+- `WithEvents` 変数宣言の highlight: `variable_declarator` の `name:` field (現状は `@variable`、`@variable.other.member` 等への昇格検討)
+- `exit_statement` の対象 (`Sub`/`Function`/`For`/`Do`) を `@keyword` として個別 capture (現状はキーワードリストで一括)
+
+### 完了判定
+
+| 完了基準 | 状態 |
+|----------|------|
+| corpus 72 → 74 ✓ | ✅ 74/74 |
+| highlight goto_on_error.bas fixture ✓ | ✅ 4 assertions |
+| deftype.bas +3 assertions (query 手動検証 ✓) | ✅ |
+| 2 feat + 1 docs commit 構成 | ✅ |
+| Sprint 8 自動着手しない | ✅ (完了後 idle 復帰) |
+
+**判定: 達成** — Step A (GoTo/@label XS) + Step B (DefType fixture XS) 両件、2 feat commit で完了。
+
+---
+
 ## 参考仕様
 - VBA Language Specification (Microsoft [MS-VBAL])
 - tree-sitter docs (https://tree-sitter.github.io/tree-sitter/)
