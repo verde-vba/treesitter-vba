@@ -639,7 +639,10 @@ module.exports = grammar({
     qualified_name: ($) =>
       prec.left(
         PREC.member,
-        seq($.identifier, repeat1(seq('.', $.identifier))),
+        seq(
+          field('library', $.identifier),
+          repeat1(seq('.', field('name', $.identifier))),
+        ),
       ),
 
     unary_expression: ($) =>

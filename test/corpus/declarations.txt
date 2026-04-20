@@ -81,3 +81,50 @@ End Enum
       name: (identifier))
     (enum_member
       name: (identifier))))
+
+==================
+Library-qualified COM types
+==================
+
+Dim coll As VBA.Collection
+Dim app As Excel.Application
+Dim dict As Scripting.Dictionary
+
+---
+
+(source_file
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      type: (qualified_name
+        library: (identifier)
+        name: (identifier))))
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      type: (qualified_name
+        library: (identifier)
+        name: (identifier))))
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      type: (qualified_name
+        library: (identifier)
+        name: (identifier)))))
+
+==================
+Multi-level qualified type
+==================
+
+Dim x As VBA.Collection.Item
+
+---
+
+(source_file
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      type: (qualified_name
+        library: (identifier)
+        name: (identifier)
+        name: (identifier)))))

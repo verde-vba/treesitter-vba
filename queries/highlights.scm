@@ -84,4 +84,8 @@
 [ "(" ")" "," "." ":" ] @punctuation.delimiter
 [ "=" "+" "-" "*" "/" "\\" "^" "&" "<" ">" "<=" ">=" "<>" ":=" ] @operator
 
+(qualified_name
+  library: (identifier) @namespace
+  name: (identifier) @type)
+
 (identifier) @variable
