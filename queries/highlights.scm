@@ -12,7 +12,9 @@
   "Do" "Loop" "While" "Wend" "Until"
   "Select" "Case" "Is"
   "With"
-  "Call" "Return" "Exit" "GoSub" "Implements"
+  "Call" "Return" "Exit" "GoSub" "Implements" "Event"
+  "DefBool" "DefByte" "DefCur" "DefDate" "DefDbl" "DefDec"
+  "DefInt" "DefLng" "DefLngLng" "DefLngPtr" "DefObj" "DefSng" "DefStr" "DefVar"
   "Type" "Enum"
   "On" "Error" "GoTo" "Resume"
   "Option" "Explicit" "Compare" "Base" "Binary" "Text" "Database"
@@ -52,6 +54,7 @@
 (const_declaration name: (identifier) @constant)
 
 (implements_statement name: (identifier) @type)
+(event_declaration name: (identifier) @function)
 
 ; Calls
 (call_expression function: (identifier) @function.call)

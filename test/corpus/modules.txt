@@ -394,3 +394,108 @@ Implements MyLib.IInterface
     name: (qualified_name
       library: (identifier)
       name: (identifier))))
+
+==================
+DefType single range A-Z
+==================
+
+DefInt A-Z
+
+---
+
+(source_file
+  (def_type_statement
+    (letter_range
+      start: (identifier)
+      end: (identifier))))
+
+==================
+DefType custom range X-Y
+==================
+
+DefStr X-Y
+
+---
+
+(source_file
+  (def_type_statement
+    (letter_range
+      start: (identifier)
+      end: (identifier))))
+
+==================
+DefType multiple ranges
+==================
+
+DefLng A-C, E-M
+
+---
+
+(source_file
+  (def_type_statement
+    (letter_range
+      start: (identifier)
+      end: (identifier))
+    (letter_range
+      start: (identifier)
+      end: (identifier))))
+
+==================
+DefType all-letters variant (DefBool)
+==================
+
+DefBool A-Z
+
+---
+
+(source_file
+  (def_type_statement
+    (letter_range
+      start: (identifier)
+      end: (identifier))))
+
+==================
+Event declaration no args
+==================
+
+Event Resize()
+
+---
+
+(source_file
+  (event_declaration
+    name: (identifier)
+    parameters: (parameter_list)))
+
+==================
+Event declaration with ByVal parameter
+==================
+
+Event Click(ByVal x As Integer)
+
+---
+
+(source_file
+  (event_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (builtin_type)))))
+
+==================
+Event declaration with visibility and ByRef parameter
+==================
+
+Public Event StateChange(ByRef state As Long)
+
+---
+
+(source_file
+  (event_declaration
+    visibility: (visibility)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (builtin_type)))))
