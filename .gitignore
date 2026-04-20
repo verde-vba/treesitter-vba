@@ -1,12 +1,21 @@
+# Node / npm
 node_modules/
 build/
+prebuilds/
 *.log
+*.tgz
+*.node
+
+# Generated tree-sitter artifacts
 src/parser.c
 src/tree_sitter/
 src/grammar.json
 src/node-types.json
 *.wasm
-.DS_Store
+
+# Rust / Cargo
 target/
-*.node
 Cargo.lock
+
+# OS
+.DS_Store
