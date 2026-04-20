@@ -31,7 +31,11 @@
 (const_declaration
   name: (identifier) @local.definition.constant)
 
-; Definitions: preprocessor constants (module-wide syntactic scope)
+; Definitions: preprocessor constants (module-wide syntactic scope).
+; References such as `#If DEBUG_MODE Then` or `#If DEBUG_MODE And VBA7 Then`
+; resolve through the generic `(identifier) @local.reference` rule below,
+; because `condition:` holds either an identifier or a binary_expression
+; whose operands are identifiers.
 (preprocessor_const
   name: (identifier) @local.definition.constant)
 
