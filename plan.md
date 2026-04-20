@@ -354,7 +354,31 @@ pattern: 39  capture: 17 - variable, start: (0, 3), end: (0, 7)   Foo
 
 ### Try (試すこと)
 - GoSub / DefType / Event / Implements を grammar.js に追加して corpus カバレッジをさらに拡大 (Phase 3 候補)
-- `While/Wend` や `Inline If` の highlight fixture を追加して highlight 層のカバレッジも向上
+- ~~`While/Wend` や `Inline If` の highlight fixture を追加して highlight 層のカバレッジも向上~~ ✅ 完了 (2026-04-21)
+
+---
+
+## Phase 2 Sprint 3 (highlight fixture 拡充) 完了記録 (2026-04-21)
+
+| ファイル | assertions | カバーする構文 |
+|----------|-----------|----------------|
+| `test/highlight/while_wend.bas` | 5 | `While/Wend` ループ (`while_statement` ノード) |
+| `test/highlight/inline_if.bas` | 8 | Inline If (consequence のみ) / Inline If Else (consequence + alternative) |
+
+**全 fixture green 確認:** `tree-sitter test --file-name while_wend` / `--file-name inline_if` ともに 16 ファイル全 ✓
+
+### Sprint 3 レトロスペクティブ (KPT)
+
+#### Keep
+- S 式を `/tmp/*.bas` で先取りしてカラム位置を確定してから fixture を書く → アサーション一発 green
+- `--file-name <partial>` で部分マッチ実行 — 全フィクスチャを再テストするため新旧のリグレッションを同時確認できる
+
+#### Problem
+- highlight fixture は `^` カラム指定がズレると silent failure しやすい → 先に `tree-sitter parse` で位置を数えてから書く習慣が重要
+
+#### Try (Phase 3 向け)
+- GoSub / Return (GoSub) / DefType / Event / Implements を grammar.js に追加 → corpus + highlight fixture セット追加
+- tree-sitter 0.26 リリース時に `test/locals/basics.bas` を復活させて locals.scm を検証
 
 ---
 
