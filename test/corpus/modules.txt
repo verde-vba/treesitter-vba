@@ -455,6 +455,37 @@ DefBool A-Z
       end: (identifier))))
 
 ==================
+DefType multiple ranges (DefBool variant)
+==================
+
+DefBool A-C, E-M
+
+---
+
+(source_file
+  (def_type_statement
+    (letter_range
+      start: (identifier)
+      end: (identifier))
+    (letter_range
+      start: (identifier)
+      end: (identifier))))
+
+==================
+DefType single range (DefDate)
+==================
+
+DefDate X-Z
+
+---
+
+(source_file
+  (def_type_statement
+    (letter_range
+      start: (identifier)
+      end: (identifier))))
+
+==================
 Event declaration no args
 ==================
 

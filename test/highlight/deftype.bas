@@ -11,3 +11,7 @@ DefLng A-C, E-M
 '           ^ @variable
 DefBool A-Z
 ' <- @keyword
+DefDate X-Z
+' <- @keyword
+'       ^ @variable
+'         ^ @variable
