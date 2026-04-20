@@ -17,6 +17,14 @@ Sub TestLiterals()
 '       ^ @constant.builtin
     v = Null
 '       ^ @constant.builtin
+    v = Empty
+'       ^ @constant.builtin
+    h = &HFF
+'       ^ @number
+    o = &O77
+'       ^ @number
+    d = #2023-12-31#
+'       ^ @string.special
 End Sub
 ' <- @keyword
 '   ^ @keyword
