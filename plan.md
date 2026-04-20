@@ -446,6 +446,52 @@ pattern: 39  capture: 17 - variable, start: (0, 3), end: (0, 7)   Foo
 
 **全 fixture green 確認:** corpus 65 件 ✓、highlight 18 ファイル ✓
 
+---
+
+## Phase 3 Sprint 3 (DefType + Event grammar 追加) 完了記録 (2026-04-21)
+
+### 実施内容
+
+| 変更 | 詳細 |
+|------|------|
+| `grammar.js` | `def_type_statement` ルール追加 (14 keyword variants + `commaSep1($.letter_range)`) |
+| `grammar.js` | `letter_range` sub-rule 追加 (`start` / `end` field, `$.identifier` 使用) |
+| `grammar.js` | `event_declaration` ルール追加 (optional visibility + `Event` keyword + name + parameter_list) |
+| `grammar.js` | `_module_item` choice に `$.def_type_statement` / `$.event_declaration` 追加 |
+| `queries/highlights.scm` | `"Event"` + 14 DefType キーワード群をキーワードリストに追加 |
+| `queries/highlights.scm` | `(event_declaration name: (identifier) @function)` 追加 |
+| `test/corpus/modules.txt` | DefType 4 件 + Event 3 件 corpus 追加 (65 → 72 件) |
+| `test/highlight/deftype.bas` | highlight fixture 追加 (9 assertions: keyword / variable) |
+| `test/highlight/event.bas` | highlight fixture 追加 (9 assertions: keyword / function / variable.parameter / type.builtin) |
+
+**全 fixture green 確認:** corpus 72/72 ✓、highlight 20 ファイル ✓
+
+### probe 結果 (事前確認)
+- `DefInt A-Z`: `(ERROR ...)` として parse — 3 identifier に分解されていた
+- `Event Click(...)`: `(ERROR ...)` として parse — `Public Event` は `variable_declaration` に誤パース
+- `_module_item` 登録が両方に必要と判断 (Sprint 2 と同パターン)
+
+### TDD サイクル記録
+- **probe:** `tree-sitter parse` で ERROR / 誤パース確認 → `_module_item` 登録が必要と判断
+- **RED:** corpus 7 件 (DefType 4 + Event 3) 追加 → 全 FAIL 確認
+- **GREEN:** `def_type_statement` + `letter_range` + `event_declaration` ルール追加 + `_module_item` 登録 + `tree-sitter generate` → corpus 72 件 green
+- **highlight:** `deftype.bas` (9 assertions) + `event.bas` (9 assertions) fixture green
+
+### Sprint 3 レトロスペクティブ (KPT)
+
+#### Keep
+- probe → RED → GREEN → highlight の TDD 順序を厳守
+- `letter_range` を `$.identifier` で実装: 単一文字制約は意味解析層の責務として grammar 層では不要
+- `event_declaration` が既存の `parameter_list` を完全再利用できた — DRY を維持
+
+#### Problem
+- `tree-sitter query` 出力の node start が「空白を含む範囲」を報告するため fixture のカラム位置計算で混乱 → 実際の文字位置 (視覚的カラム) を使えば一発 green (Sprint 2 Problem の教訓が今回も効いた)
+
+#### Try (Phase 3 Sprint 4 候補)
+- tree-sitter-cli 0.26.x upgrade (筆頭) — locals.scm リグレッションテスト復活を確認
+- `WithEvents` keyword 付き変数宣言の highlight fixture 追加 (XS)
+- `GoSub` ラベル `Return` の highlight テスト追加 (XS)
+
 ### probe 結果 (事前確認)
 - `Implements IFoo` の現状挙動: `(ERROR ...)` として parse — `paren_less_call` でなく完全な ERROR
 - GoSub (Sprint 1) との違い: GoSub は手続き内で `paren_less_call` にフォールバックしたが、`Implements` はモジュールスコープで `_statement` choice にもないため ERROR
@@ -466,6 +512,6 @@ pattern: 39  capture: 17 - variable, start: (0, 3), end: (0, 7)   Foo
 - `tree-sitter` の parse 位置報告に一見矛盾があった (`Implements` 10 chars + 空白 1 = identifier start が col 10 と col 11 で迷った) → 実際に fixture を書いて実行して確認するのが最速
 
 #### Try (Phase 3 Sprint 3 候補)
-- `DefType` 文 (`DefInt`, `DefStr` 等): grammar 未実装 — module scope 単行宣言
-- `Event` 宣言 (`Event EventName(args)`): grammar 未実装 — module scope 宣言
+- ~~`DefType` 文 (`DefInt`, `DefStr` 等): grammar 未実装 — module scope 単行宣言~~ ✅ 完了 (2026-04-21)
+- ~~`Event` 宣言 (`Event EventName(args)`): grammar 未実装 — module scope 宣言~~ ✅ 完了 (2026-04-21)
 - tree-sitter-cli 0.26.x upgrade (専用 Sprint) — locals.scm リグレッションテスト復活を確認
