@@ -45,3 +45,28 @@ End Sub
               (variable_declarator
                 name: (identifier)
                 type: (builtin_type)))))))))
+
+==================
+Module-level #If wrapping a Sub with body
+==================
+
+#If VBA7 Then
+Sub FooX()
+    Dim x As Long
+End Sub
+#End If
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_if
+      condition: (identifier)
+      (sub_declaration
+        name: (identifier)
+        parameters: (parameter_list)
+        body: (statement_block
+          (variable_declaration
+            (variable_declarator
+              name: (identifier)
+              type: (builtin_type))))))))

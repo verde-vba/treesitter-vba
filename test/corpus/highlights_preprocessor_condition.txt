@@ -68,3 +68,23 @@ Preprocessor #ElseIf with identifier condition
           (variable_declarator
             name: (identifier)
             type: (builtin_type)))))))
+
+==================
+Preprocessor #If with unary Not condition
+==================
+
+#If Not DEBUG_MODE Then
+    Dim x As Long
+#End If
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_if
+      condition: (unary_expression
+        operand: (identifier))
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (builtin_type))))))

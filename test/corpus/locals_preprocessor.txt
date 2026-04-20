@@ -58,3 +58,21 @@ Preprocessor #Const referenced by #If binary condition
         (variable_declarator
           name: (identifier)
           type: (builtin_type))))))
+
+==================
+Preprocessor #Const value is a binary_expression of literals
+==================
+
+#Const MAX = 10 + 5
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_const
+      name: (identifier)
+      value: (binary_expression
+        left: (literal
+          (integer_literal))
+        right: (literal
+          (integer_literal))))))
