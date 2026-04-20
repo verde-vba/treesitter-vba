@@ -4,7 +4,7 @@ Sub TestGoSub()
 '   ^ @keyword
     Exit Sub
 '   ^ @keyword
-'        ^ @keyword
+'        ^ @keyword.control.return
     Return
 '   ^ @keyword
 End Sub

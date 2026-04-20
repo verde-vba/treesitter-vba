@@ -63,6 +63,13 @@
 (paren_less_call function: (identifier) @function.call)
 (paren_less_call function: (member_access property: (identifier) @function.method))
 
+; exit_statement — override generic keyword with context-aware captures
+(exit_statement "Sub" @keyword.control.return)
+(exit_statement "Function" @keyword.control.return)
+(exit_statement "Property" @keyword.control.return)
+(exit_statement "For" @keyword.control.loop)
+(exit_statement "Do" @keyword.control.loop)
+
 ; Labels (GoSub/GoTo/On Error GoTo targets and label declarations)
 (gosub_statement target: (identifier) @label)
 (goto_statement target: (identifier) @label)
