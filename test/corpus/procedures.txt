@@ -98,6 +98,75 @@ End Property
         value: (identifier)))))
 
 ==================
+Optional parameter with default and ParamArray
+==================
+
+Sub Show(Optional msg As String = "ok", ParamArray extra() As Variant)
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (builtin_type)
+        default: (literal (string_literal)))
+      (parameter
+        name: (identifier)
+        type: (builtin_type)))))
+
+==================
+Property Let
+==================
+
+Public Property Let Name(ByVal val As String)
+    mName = val
+End Property
+
+---
+
+(source_file
+  (property_declaration
+    visibility: (visibility)
+    accessor: (accessor)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (builtin_type)))
+    body: (statement_block
+      (assignment
+        target: (identifier)
+        value: (identifier)))))
+
+==================
+Property Set
+==================
+
+Public Property Set Data(ByVal obj As Object)
+    Set mData = obj
+End Property
+
+---
+
+(source_file
+  (property_declaration
+    visibility: (visibility)
+    accessor: (accessor)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (builtin_type)))
+    body: (statement_block
+      (set_statement
+        target: (identifier)
+        value: (identifier)))))
+
+==================
 Library-qualified type in parameter
 ==================
 

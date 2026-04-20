@@ -211,6 +211,62 @@ End Sub
             value: (literal (integer_literal))))))))
 
 ==================
+While / Wend loop
+==================
+
+Sub Main()
+    While n > 0
+        n = n - 1
+    Wend
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (while_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (literal (integer_literal)))
+        body: (statement_block
+          (assignment
+            target: (identifier)
+            value: (binary_expression
+              left: (identifier)
+              right: (literal (integer_literal)))))))))
+
+==================
+Inline If Then Else
+==================
+
+Sub Check()
+    If x > 0 Then MsgBox "pos" Else MsgBox "neg"
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (if_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (literal (integer_literal)))
+        consequence: (paren_less_call
+          function: (identifier)
+          arguments: (paren_less_argument_list
+            (literal (string_literal))))
+        alternative: (paren_less_call
+          function: (identifier)
+          arguments: (paren_less_argument_list
+            (literal (string_literal))))))))
+
+==================
 Nested With block
 ==================
 
