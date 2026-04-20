@@ -108,6 +108,115 @@ End Sub
 
 ---
 
+## Phase 2 locals テスト調査ログ (2026-04-21)
+
+### tree-sitter 0.25.10 の test/locals/ 実装バグ (確定)
+
+`tree-sitter test` が `test/locals/` ファイルを **S 式クエリとしてコンパイルしようとする** ことを GitHub ソース (`cli/src/main.rs`) で確認。
+
+**根本原因 (tree-sitter/tree-sitter v0.25.10 `cli/src/main.rs` ~L37628):**
+```rust
+query::query_file_at_path(
+    language,
+    path,           // source file: test/locals/basics.bas
+    &path.display().to_string(),
+    path,           // BUG: query_path も同じ path! → VBA を S 式としてコンパイルしようとする
+    false, None, None, true, false, false, false,
+)?;
+```
+
+本来 `query_path` は `queries/locals.scm` であるべき。  
+このバグにより `test/locals/` の全ファイルが**構造的にテスト不可**。highlights/tags は専用ランナー (`test_highlight::test_highlights`, `test_tags::test_tags`) で正しく動作するため影響なし。
+
+**確認済み動作 (2026-04-21):**
+- corpus: 54/54 ✓
+- highlights: 14 fixture / 199 assertions ✓
+- locals: `Query compilation failed — Query error at 1:1. Invalid syntax: Sub Process()`
+- exit code: 1 (test/locals/basics.bas が存在する限り常に失敗)
+
+**対処:**
+- `test/locals/basics.bas` を削除し `tree-sitter test` の exit 0 を復元
+- scope-only fixture の内容は plan.md に保存 (tree-sitter 修正後に再追加)
+
+**保存: scope-only fixture 案 (Sub/Function の `' <- local.scope` 2 件):**
+```vba
+Sub Process()
+' <- local.scope
+End Sub
+
+Function GetValue() As Integer
+' <- local.scope
+End Function
+```
+
+**Follow-up:**
+- tree-sitter/tree-sitter upstream issue を立てるか確認 (buggy path reuse in generic query test runner)
+- 定義系 (Const / Type / Enum の `@local.definition.*`) のアサーションは修正後に着手
+- 次バージョン (0.26+) で修正されているか確認してから `test/locals/` を復活させる
+
+---
+
+## Phase 2 upstream issue 草稿 (2026-04-21)
+
+### タイトル
+`tree-sitter test` crashes with `Query compilation failed` when `test/locals/` directory exists
+
+### 再現環境
+- tree-sitter CLI: 0.25.10
+- Grammar: any (reproduced with tree-sitter-vba)
+- OS: macOS (Darwin 25.3.0)
+
+### 再現手順
+1. 任意の tree-sitter grammar に `test/locals/basics.bas`（またはソースファイル）を作成
+2. `tree-sitter test` を実行
+
+### 実際の動作
+```
+Query compilation failed — Query error at 1:1.
+  Invalid syntax: Sub Process()
+```
+exit code: 1
+
+### 期待される動作
+`test/locals/` 内のファイルが言語ソースとして扱われ、対応する `queries/locals.scm` と照合されてスコープ/定義/参照アサーションが検証される。
+
+### 根本原因
+`cli/src/main.rs` の generic query test runner（highlights/tags と同じランナーを流用）で、`path`（ソースファイル）を `query_path` にも渡している:
+
+```rust
+// cli/src/main.rs (approximately L37600–L37640, tree-sitter v0.25.10)
+query::query_file_at_path(
+    language,
+    path,                            // source: test/locals/basics.bas
+    &path.display().to_string(),
+    path,                            // BUG: query_path も同じ path を指している
+    false, None, None, true, false, false, false,
+)?;
+```
+
+本来 `query_path` は `queries/locals.scm` であるべき。
+
+`test_highlight::test_highlights` や `test_tags::test_tags` は専用ランナーを持ちソースと query を正しく分離しているため影響なし。
+
+### 影響
+- `test/locals/` に 1 ファイルでも置くと `tree-sitter test` が常に exit 1
+- corpus テスト・highlights テストには影響しない
+- 全文法で `queries/locals.scm` のリグレッションテストが実質的に不可能
+
+### 最小再現ケース
+```vba
+; test/locals/basics.bas
+Sub Process()
+' <- local.scope
+End Sub
+```
+これを `test/locals/basics.bas` として置き `tree-sitter test` を実行すると再現。
+
+### 想定修正
+`query_path` 引数を `queries/locals.scm` のパスに修正し、locals 専用テストランナー（`test_locals::test_locals`）を導入する。
+
+---
+
 ## Phase 2 候補
 
 ### (A) `queries/locals.scm` 整備 ★推奨
@@ -135,6 +244,17 @@ nvim-treesitter-textobjects プラグイン対応。
 ### (E) fixture 優先度バグ解消
 - `with_blocks.bas` の `With` ブロック内プロパティが `@variable` にフォールバックしている箇所を `@property` に修正。
 - `highlights.scm` でキャプチャ順を調整し、`leading_dot_member_access` の property を優先。
+
+---
+
+## Phase 2 進捗 (2026-04-21)
+
+| ステップ | 状態 | 内容 |
+|----------|------|------|
+| upstream issue 草稿 | ✅ 完了 | `cli/src/main.rs` query_path バグを再現手順・根本原因・最小再現ケース付きで plan.md に記録 |
+| (E) fixture priority 修正 | 🔲 保留 | probe なしで `leading_dot_member_access` の捕捉順問題を断定できないため次サイクルに持越し |
+| (D) corpus 拡充 | 🔲 未着手 | ネスト With / Enum 値式 / Declare エラー系 |
+| (A) locals.scm | 🔲 ブロック | tree-sitter 0.25.10 バグにより `test/locals/` テスト不可 — 0.26+ 待ち |
 
 ---
 
