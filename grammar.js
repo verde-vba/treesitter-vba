@@ -365,6 +365,7 @@ module.exports = grammar({
         $.on_error_statement,
         $.resume_statement,
         $.goto_statement,
+        $.gosub_statement,
         $.exit_statement,
         $.return_statement,
         $.redim_statement,
@@ -539,6 +540,9 @@ module.exports = grammar({
 
     goto_statement: ($) =>
       seq(kw('GoTo'), field('target', choice($.integer_literal, $.identifier))),
+
+    gosub_statement: ($) =>
+      seq(kw('GoSub'), field('target', choice($.integer_literal, $.identifier))),
 
     exit_statement: ($) =>
       seq(

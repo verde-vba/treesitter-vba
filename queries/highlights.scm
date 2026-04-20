@@ -12,7 +12,7 @@
   "Do" "Loop" "While" "Wend" "Until"
   "Select" "Case" "Is"
   "With"
-  "Call" "Return" "Exit"
+  "Call" "Return" "Exit" "GoSub"
   "Type" "Enum"
   "On" "Error" "GoTo" "Resume"
   "Option" "Explicit" "Compare" "Base" "Binary" "Text" "Database"

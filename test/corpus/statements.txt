@@ -300,3 +300,32 @@ End Sub
                 target: (leading_dot_member_access
                   property: (identifier))
                 value: (literal (integer_literal))))))))))
+
+==================
+GoSub / Return
+==================
+
+Sub TestGoSub()
+    GoSub CleanUp
+    Exit Sub
+CleanUp:
+    x = 0
+    Return
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (gosub_statement
+        target: (identifier))
+      (exit_statement)
+      (label
+        name: (identifier))
+      (assignment
+        target: (identifier)
+        value: (literal (integer_literal)))
+      (return_statement))))
