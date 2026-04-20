@@ -1,0 +1,47 @@
+; regression test for Task A (indents.scm preprocessor coverage)
+;
+; These corpus tests pin the parse-tree shape for `#If / #ElseIf / #Else /
+; #End If` blocks so that the companion rules in `queries/indents.scm`
+; (which mark preprocessor_if / preprocessor_elseif / preprocessor_else as
+; `@indent.begin` and the `#End` / `#ElseIf` / `#Else` tokens as dedent /
+; branch anchors) have a stable grammar contract to anchor onto.
+
+==================
+Preprocessor #If / #ElseIf / #Else inside Sub body (indents coverage)
+==================
+
+Sub Foo()
+    #If VBA7 Then
+        Dim x As LongPtr
+    #ElseIf Win64 Then
+        Dim x As Long
+    #Else
+        Dim x As Integer
+    #End If
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (preprocessor_directive
+        (preprocessor_if
+          condition: (identifier)
+          (variable_declaration
+            (variable_declarator
+              name: (identifier)
+              type: (builtin_type)))
+          (preprocessor_elseif
+            condition: (identifier)
+            (variable_declaration
+              (variable_declarator
+                name: (identifier)
+                type: (builtin_type))))
+          (preprocessor_else
+            (variable_declaration
+              (variable_declarator
+                name: (identifier)
+                type: (builtin_type)))))))))
