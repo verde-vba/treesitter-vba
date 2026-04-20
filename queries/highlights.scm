@@ -63,6 +63,11 @@
 (paren_less_call function: (identifier) @function.call)
 (paren_less_call function: (member_access property: (identifier) @function.method))
 
+; error handling — Next target in Resume Next, and label in standalone Resume
+(on_error_statement "Next" @keyword.exception)
+(resume_statement "Next" @keyword.exception)
+(resume_statement (identifier) @label)
+
 ; exit_statement — override generic keyword with context-aware captures
 (exit_statement "Sub" @keyword.control.return)
 (exit_statement "Function" @keyword.control.return)
