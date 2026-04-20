@@ -80,6 +80,9 @@
 (preprocessor_if
   condition: (_) @expression)
 
+(preprocessor_if
+  condition: (identifier) @constant)
+
 ; Punctuation
 [ "(" ")" "," "." ":" ] @punctuation.delimiter
 [ "=" "+" "-" "*" "/" "\\" "^" "&" "<" ">" "<=" ">=" "<>" ":=" ] @operator
