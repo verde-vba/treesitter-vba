@@ -219,3 +219,22 @@ Preprocessor #If/#ElseIf/#Else/#End If with nested body
           (variable_declarator
             name: (identifier)
             type: (builtin_type)))))))
+
+==================
+Preprocessor wrapping module-level Sub
+==================
+
+#If VBA7 Then
+    Sub Foo()
+    End Sub
+#End If
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_if
+      condition: (identifier)
+      (sub_declaration
+        name: (identifier)
+        parameters: (parameter_list)))))

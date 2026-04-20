@@ -54,6 +54,13 @@ module.exports = grammar({
 
   conflicts: ($) => [
     [$._primary_expression, $._type_name],
+    // `preprocessor_directive` is reachable from both `_module_item` and
+    // `_statement`; only at reduce time can we know which wrapper to pick.
+    [$._module_item, $._statement],
+    // `variable_declaration` and `const_declaration` are reachable from
+    // both `_declaration` (module scope) and `_statement` (procedure scope),
+    // so preprocessor bodies need to defer the choice.
+    [$._declaration, $._statement],
   ],
 
   supertypes: ($) => [$._statement, $._expression, $._declaration],
@@ -149,12 +156,12 @@ module.exports = grammar({
         repeat(seq($._preprocessor_body_item, $._terminator)),
       ),
 
-    // Happy-path scope: body items are statements. `_statement` already
-    // includes `variable_declaration`, `const_declaration`, and nested
-    // `preprocessor_directive`, which covers the typical `#If VBA7`
-    // compatibility shim and conditional constants. Full procedure
-    // declarations inside `#If` are deferred to a later iteration.
-    _preprocessor_body_item: ($) => $._statement,
+    // Preprocessor bodies can appear at both module scope (wrapping Sub /
+    // Function / Property declarations) and procedure scope (wrapping
+    // statements). `_module_item` is tried first so that module-level
+    // declarations like `Sub Foo()` are recognised as `sub_declaration`
+    // rather than falling back to `paren_less_call` via `_statement`.
+    _preprocessor_body_item: ($) => choice($._module_item, $._statement),
 
     // ─── Procedure declarations ────────────────────────────────────────
 
