@@ -340,3 +340,31 @@ Preprocessor example: Win64 / VBA7 branching with #Const
           (variable_declarator
             name: (identifier)
             type: (builtin_type)))))))
+
+==================
+Preprocessor #If with binary condition
+==================
+
+#If DEBUG_MODE And VBA7 Then
+    Dim y As LongPtr
+#Else
+    Dim y As Long
+#End If
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_if
+      condition: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (builtin_type)))
+      (preprocessor_else
+        (variable_declaration
+          (variable_declarator
+            name: (identifier)
+            type: (builtin_type)))))))
