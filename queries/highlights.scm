@@ -12,7 +12,7 @@
   "Do" "Loop" "While" "Wend" "Until"
   "Select" "Case" "Is"
   "With"
-  "Call" "Return" "Exit" "GoSub"
+  "Call" "Return" "Exit" "GoSub" "Implements"
   "Type" "Enum"
   "On" "Error" "GoTo" "Resume"
   "Option" "Explicit" "Compare" "Base" "Binary" "Text" "Database"
@@ -50,6 +50,8 @@
 (enum_member name: (identifier) @constant)
 
 (const_declaration name: (identifier) @constant)
+
+(implements_statement name: (identifier) @type)
 
 ; Calls
 (call_expression function: (identifier) @function.call)

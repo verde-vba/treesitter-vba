@@ -82,6 +82,7 @@ module.exports = grammar({
       choice(
         $.attribute_stmt,
         $.option_stmt,
+        $.implements_statement,
         $._declaration,
         $.preprocessor_directive,
       ),
@@ -113,6 +114,9 @@ module.exports = grammar({
           kw('Private'),
         ),
       ),
+
+    implements_statement: ($) =>
+      seq(kw('Implements'), field('name', choice($.qualified_name, $.identifier))),
 
     // ─── Preprocessor directives ──────────────────────────────────────
     //

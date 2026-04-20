@@ -368,3 +368,29 @@ Preprocessor #If with binary condition
           (variable_declarator
             name: (identifier)
             type: (builtin_type)))))))
+
+==================
+Implements statement (simple)
+==================
+
+Implements IFoo
+
+---
+
+(source_file
+  (implements_statement
+    name: (identifier)))
+
+==================
+Implements statement (qualified name)
+==================
+
+Implements MyLib.IInterface
+
+---
+
+(source_file
+  (implements_statement
+    name: (qualified_name
+      library: (identifier)
+      name: (identifier))))
