@@ -63,6 +63,10 @@
 (paren_less_call function: (identifier) @function.call)
 (paren_less_call function: (member_access property: (identifier) @function.method))
 
+; Labels (GoSub target and label_declaration name)
+(gosub_statement target: (identifier) @label)
+(label name: (identifier) @label)
+
 (member_access property: (identifier) @property)
 (leading_dot_member_access property: (identifier) @property)
 

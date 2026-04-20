@@ -2,10 +2,10 @@ Sub Main()
 ' <- @keyword
     GoSub CleanUp
 '   ^ @keyword
-'         ^ @variable
+'         ^ @label
     Exit Sub
 CleanUp:
-' <- @variable
+' <- @label
 '      ^ @punctuation.delimiter
     Return
 '   ^ @keyword
