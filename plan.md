@@ -253,7 +253,7 @@ nvim-treesitter-textobjects プラグイン対応。
 |----------|------|------|
 | upstream issue 草稿 | ✅ 完了 | `cli/src/main.rs` query_path バグを再現手順・根本原因・最小再現ケース付きで plan.md に記録 |
 | (E) fixture priority 修正 | 🔲 保留 | probe なしで `leading_dot_member_access` の捕捉順問題を断定できないため次サイクルに持越し |
-| (D) corpus 拡充 | 🔲 未着手 | ネスト With / Enum 値式 / Declare エラー系 |
+| (D) corpus 拡充 | 🟡 部分完了 | Nested With / Enum 値式 (`Or` binary_expression) / Declare legacy (PtrSafe なし) を追加。54→57 件 |
 | (A) locals.scm | 🔲 ブロック | tree-sitter 0.25.10 バグにより `test/locals/` テスト不可 — 0.26+ 待ち |
 
 ---

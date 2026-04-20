@@ -83,6 +83,38 @@ End Enum
       name: (identifier))))
 
 ==================
+Enum with expression values
+==================
+
+Public Enum Flags
+    FlagNone = 0
+    FlagRead = 1
+    FlagWrite = 2
+    FlagBoth = FlagRead Or FlagWrite
+End Enum
+
+---
+
+(source_file
+  (enum_declaration
+    visibility: (visibility)
+    name: (identifier)
+    (enum_member
+      name: (identifier)
+      value: (literal (integer_literal)))
+    (enum_member
+      name: (identifier)
+      value: (literal (integer_literal)))
+    (enum_member
+      name: (identifier)
+      value: (literal (integer_literal)))
+    (enum_member
+      name: (identifier)
+      value: (binary_expression
+        left: (identifier)
+        right: (identifier)))))
+
+==================
 Library-qualified COM types
 ==================
 

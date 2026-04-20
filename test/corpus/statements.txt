@@ -209,3 +209,38 @@ End Sub
             target: (leading_dot_member_access
               property: (identifier))
             value: (literal (integer_literal))))))))
+
+==================
+Nested With block
+==================
+
+Sub Main()
+    With outer
+        .X = 1
+        With inner
+            .Y = 2
+        End With
+    End With
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (with_statement
+        object: (identifier)
+        body: (statement_block
+          (assignment
+            target: (leading_dot_member_access
+              property: (identifier))
+            value: (literal (integer_literal)))
+          (with_statement
+            object: (identifier)
+            body: (statement_block
+              (assignment
+                target: (leading_dot_member_access
+                  property: (identifier))
+                value: (literal (integer_literal))))))))))

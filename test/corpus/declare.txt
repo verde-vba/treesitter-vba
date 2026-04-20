@@ -37,3 +37,18 @@ Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByR
       (parameter
         name: (identifier)
         type: (builtin_type)))))
+
+==================
+Declare Function without PtrSafe (legacy 32-bit)
+==================
+
+Declare Function GetTickCount Lib "kernel32" () As Long
+
+---
+
+(source_file
+  (declare_statement
+    name: (identifier)
+    lib: (string_literal)
+    parameters: (parameter_list)
+    return_type: (builtin_type)))
