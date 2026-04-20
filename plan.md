@@ -3,6 +3,18 @@
 ## ゴール
 VBA (Visual Basic for Applications) をパースできる tree-sitter 文法を実装する。
 
+## 🔴 最優先事項 (2026-04-21 時点)
+
+**`queries/locals.scm` のリグレッションテストが tree-sitter 0.25.10 の upstream バグにより不可能**
+
+- 影響: `test/locals/` にファイルを置くと `tree-sitter test` が常に exit 1 になるため、locals クエリは**書けてもテストできない**状態
+- 原因: `cli/src/main.rs` の generic query test runner が source path と query path を取り違えている (詳細: L111-217)
+- 自力解決不能: tree-sitter CLI 側の修正待ち (0.26+ を想定)
+- アクション:
+  1. tree-sitter/tree-sitter へ upstream issue を起票する (草稿は L159-217 に完成済み)
+  2. 0.26+ リリース時に `test/locals/basics.bas` を復活させて検証
+  3. それまで locals.scm の着手は保留 — 先に (D) corpus 拡充 / (E) highlight 優先度バグに時間を割く
+
 ## スコープ (MVP) — 実装済み
 - [x] モジュール (標準/クラス) のトップレベル宣言
 - [x] `Sub` / `Function` / `Property` 定義
@@ -291,7 +303,7 @@ pattern: 39  capture: 17 - variable, start: (0, 3), end: (0, 7)   Foo
 | ステップ | 状態 | 内容 |
 |----------|------|------|
 | upstream issue 草稿 | ✅ 完了 | `cli/src/main.rs` query_path バグを再現手順・根本原因・最小再現ケース付きで plan.md に記録 |
-| (E) fixture priority 修正 | 🔬 probe 完了 | last-wins モデル確定。`(identifier) @variable` (pattern 39) が全識別子を上書き。修正方針: catch-all を先頭移動し具体的ルールを後置 |
+| (E) fixture priority 修正 | ✅ 完了 | `(identifier) @variable` を catch-all 先頭に移動 (last-wins 活用)。13 アサーション更新: @function / @property / @constant / @type が正しく動作 |
 | (D) corpus 拡充 | 🟡 部分完了 | Nested With / Enum 値式 (`Or` binary_expression) / Declare legacy (PtrSafe なし) を追加。54→57 件 |
 | (A) locals.scm | 🔲 ブロック | tree-sitter 0.25.10 バグにより `test/locals/` テスト不可 — 0.26+ 待ち |
 
