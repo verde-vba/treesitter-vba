@@ -92,6 +92,31 @@ End Type
       type: (builtin_type))))
 
 ==================
+ReDim with call-expression bounds
+==================
+
+Sub S()
+    ReDim arr(1 To UBound(src))
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (redim_statement
+        (variable_declarator
+          name: (identifier)
+          (array_bound
+            lower: (literal (integer_literal))
+            upper: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))))))))
+
+==================
 Mixed form multi-dimensional array bounds
 ==================
 
