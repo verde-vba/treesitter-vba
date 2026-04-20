@@ -425,5 +425,47 @@ pattern: 39  capture: 17 - variable, start: (0, 3), end: (0, 7)   Foo
 - `GoSub CleanUp` が ERROR でなく `paren_less_call` として parse される挙動は直感に反する → grammar に keyword が未登録の場合は identifier として fallback するパターンを先に probe すべき
 
 #### Try
-- `Implements ClassName` grammar 追加 (module scope, 1 行 statement — XS)
+- ~~`Implements ClassName` grammar 追加 (module scope, 1 行 statement — XS)~~ ✅ 完了 (2026-04-21)
+- DefType / Event grammar 追加 → corpus + highlight fixture セット追加 (Phase 3 Sprint 3 候補)
 - tree-sitter-cli を 0.26.x に upgrade して locals.scm のバグを確認 (専用 Sprint)
+
+---
+
+## Phase 3 Sprint 2 (Implements grammar 追加) 完了記録 (2026-04-21)
+
+### 実施内容
+
+| 変更 | 詳細 |
+|------|------|
+| `grammar.js` | `implements_statement` ルール追加 (`choice($.qualified_name, $.identifier)` field name) |
+| `grammar.js` | `_module_item` choice に `$.implements_statement` 追加 (module scope, `option_stmt` 直後) |
+| `queries/highlights.scm` | `"Implements"` を keyword リストに追加 |
+| `queries/highlights.scm` | `(implements_statement name: (identifier) @type)` を追加 (単純名を `@type` に昇格) |
+| `test/corpus/modules.txt` | "Implements statement (simple)" / "Implements statement (qualified name)" corpus 追加 (65 件目・66 件目) |
+| `test/highlight/implements.bas` | highlight fixture 追加 (6 assertions) |
+
+**全 fixture green 確認:** corpus 65 件 ✓、highlight 18 ファイル ✓
+
+### probe 結果 (事前確認)
+- `Implements IFoo` の現状挙動: `(ERROR ...)` として parse — `paren_less_call` でなく完全な ERROR
+- GoSub (Sprint 1) との違い: GoSub は手続き内で `paren_less_call` にフォールバックしたが、`Implements` はモジュールスコープで `_statement` choice にもないため ERROR
+
+### TDD サイクル記録
+- **probe:** `tree-sitter parse` で ERROR 確認 → `_module_item` 登録が必要と判断
+- **RED:** corpus 2 件 (`Implements IFoo` / `Implements MyLib.IInterface`) 追加 → tests 46, 47 FAIL 確認
+- **GREEN:** `implements_statement` ルール追加 + `_module_item` 登録 + `tree-sitter generate` → corpus 65 件 green
+- **highlight:** `"Implements"` keyword 追加 + `(implements_statement name: (identifier) @type)` 追加 + `implements.bas` fixture 6 assertions green
+
+### Sprint 2 レトロスペクティブ (KPT)
+
+#### Keep
+- `tree-sitter parse` による事前 probe を必須とした → Sprint 1 Problem への対処が機能し、ERROR vs paren_less_call の挙動の違いを素早く確認できた
+- `_module_item` vs `_statement` の登録先選択を事前に AST 位置から判断できた
+
+#### Problem
+- `tree-sitter` の parse 位置報告に一見矛盾があった (`Implements` 10 chars + 空白 1 = identifier start が col 10 と col 11 で迷った) → 実際に fixture を書いて実行して確認するのが最速
+
+#### Try (Phase 3 Sprint 3 候補)
+- `DefType` 文 (`DefInt`, `DefStr` 等): grammar 未実装 — module scope 単行宣言
+- `Event` 宣言 (`Event EventName(args)`): grammar 未実装 — module scope 宣言
+- tree-sitter-cli 0.26.x upgrade (専用 Sprint) — locals.scm リグレッションテスト復活を確認
