@@ -6,6 +6,7 @@ license = "MIT"
 readme = "README.md"
 keywords = ["incremental", "parsing", "tree-sitter", "vba"]
 categories = ["parser-implementations", "parsing", "text-editors"]
+# TODO: replace this placeholder with the actual repository URL before publishing to crates.io.
 repository = "https://github.com/tree-sitter/tree-sitter-vba"
 edition = "2021"
 autoexamples = false
