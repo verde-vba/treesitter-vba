@@ -304,8 +304,57 @@ pattern: 39  capture: 17 - variable, start: (0, 3), end: (0, 7)   Foo
 |----------|------|------|
 | upstream issue 草稿 | ✅ 完了 | `cli/src/main.rs` query_path バグを再現手順・根本原因・最小再現ケース付きで plan.md に記録 |
 | (E) fixture priority 修正 | ✅ 完了 | `(identifier) @variable` を catch-all 先頭に移動 (last-wins 活用)。13 アサーション更新: @function / @property / @constant / @type が正しく動作 |
-| (D) corpus 拡充 | 🟡 部分完了 | Nested With / Enum 値式 (`Or` binary_expression) / Declare legacy (PtrSafe なし) を追加。54→57 件 |
+| (D) corpus 拡充 | ✅ 完了 | 57→62 件。追加パターン: Optional/ParamArray 付きパラメータ / Property Let / Property Set / While/Wend / Inline If |
+| (C) textobjects.scm | ✅ 完了 | `@function.outer/inner` (sub/function/property_declaration)、`@class.outer/inner` (type/enum_declaration)。CLI 検証で警告なし確認済み |
 | (A) locals.scm | 🔲 ブロック | tree-sitter 0.25.10 バグにより `test/locals/` テスト不可 — 0.26+ 待ち |
+
+### (C) textobjects.scm 検証メモ (2026-04-21)
+
+**検証手段:** `tree-sitter query queries/textobjects.scm <vba_file>`
+
+**観測結果:**
+- `@function.outer/inner`: `sub_declaration` ✓、`function_declaration` ✓、`property_declaration` ✓
+- `@class.outer/inner`: `type_declaration` (各 `type_field`) ✓、`enum_declaration` (各 `enum_member`) ✓
+- 警告なし、エラーなし
+
+**発見したギャップ & 修正:**
+- `property_declaration` が `@function.outer/inner` に含まれていなかった → 追加済み
+- VBA の Property は手続きとして呼び出し可能なため `@function.*` の対象が適切
+
+**結論:** `test/corpus/` 形式では textobjects assertion を埋め込む構文がない。検証手段は CLI manual run のみ (corpus ファイルはコードと S 式の混合テキストとして parse されるため、クエリ結果にノイズが混入する)。
+
+### (D) corpus 拡充 完了記録 (2026-04-21)
+
+| テスト名 | ファイル | カバーする構文 |
+|----------|----------|----------------|
+| Optional parameter with default and ParamArray | procedures.txt | `Optional` / `ParamArray` キーワード付きパラメータ |
+| Property Let | procedures.txt | `property_declaration` accessor=Let |
+| Property Set | procedures.txt | `property_declaration` accessor=Set |
+| While / Wend loop | statements.txt | `while_statement` |
+| Inline If Then Else | statements.txt | `if_statement` (単行、consequence/alternative が `paren_less_call`) |
+
+**非対応パターン (grammar 非実装のため corpus 追加不可):**
+- `GoSub` / `Return` (GoSub ラベル): grammar に `gosub_statement` なし
+- `DefType` 文 (`DefInt`, `DefStr` 等): grammar に未実装
+- `Event` 宣言: grammar に未実装
+- `Implements` 文: grammar に未実装
+
+---
+
+## Phase 2 Sprint レトロスペクティブ (KPT)
+
+### Keep (続けること)
+- `tree-sitter parse /tmp/xxx.bas` で S 式を先に取得してから corpus エントリを書く → 構文ミスを防ぎ一発 green
+- grammar.js のルール一覧と corpus ファイルのテスト名を突き合わせて未カバーパターンを体系的に特定する方法
+- Tidy First: corpus 追加と plan.md 更新を別 commit に分離
+
+### Problem (やめること / 改善すること)
+- `tree-sitter query` を corpus ファイルに対して実行すると S 式テキストも VBA としてパースされノイズが発生する → 専用の `.bas` テストファイルを使うべき
+- GoSub / DefType / Event / Implements など grammar が未実装の構文は期待だけ高まる → 候補リスト作成時に grammar.js で存在確認を先に行う
+
+### Try (試すこと)
+- GoSub / DefType / Event / Implements を grammar.js に追加して corpus カバレッジをさらに拡大 (Phase 3 候補)
+- `While/Wend` や `Inline If` の highlight fixture を追加して highlight 層のカバレッジも向上
 
 ---
 
