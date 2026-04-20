@@ -377,8 +377,9 @@ pattern: 39  capture: 17 - variable, start: (0, 3), end: (0, 7)   Foo
 - highlight fixture は `^` カラム指定がズレると silent failure しやすい → 先に `tree-sitter parse` で位置を数えてから書く習慣が重要
 
 #### Try (Phase 3 向け)
-- GoSub / Return (GoSub) / DefType / Event / Implements を grammar.js に追加 → corpus + highlight fixture セット追加
-- tree-sitter 0.26 リリース時に `test/locals/basics.bas` を復活させて locals.scm を検証
+- ~~GoSub を grammar.js に追加~~ ✅ 完了 (2026-04-21)
+- DefType / Event / Implements を grammar.js に追加 → corpus + highlight fixture セット追加
+- tree-sitter 0.26 リリース時に `test/locals/basics.bas` を復活させて locals.scm を検証 (npm: tree-sitter-cli 0.26.8 確認済み、package.json は ^0.25.0 制約のため upgrade は別 Sprint)
 
 ---
 
@@ -386,3 +387,43 @@ pattern: 39  capture: 17 - variable, start: (0, 3), end: (0, 7)   Foo
 - VBA Language Specification (Microsoft [MS-VBAL])
 - tree-sitter docs (https://tree-sitter.github.io/tree-sitter/)
 - highlight fixture 形式: `tree-sitter/tree-sitter` repo `docs/src/3-syntax-highlighting.md` Unit Testing セクション
+
+---
+
+## Phase 3 Sprint 1 (GoSub grammar 追加) 完了記録 (2026-04-21)
+
+### 実施内容
+
+| 変更 | 詳細 |
+|------|------|
+| `grammar.js` | `gosub_statement` ルール追加 (goto_statement と同パターン) |
+| `grammar.js` | `_statement` choice に `$.gosub_statement` 追加 |
+| `queries/highlights.scm` | `"GoSub"` を keyword リストに追加 |
+| `test/corpus/statements.txt` | GoSub / Return corpus テスト追加 (63 件目) |
+| `test/highlight/gosub.bas` | highlight fixture 追加 (7 assertions) |
+
+**全 fixture green 確認:** corpus 63 件 ✓、highlight 17 ファイル ✓
+
+### TDD サイクル記録
+- **RED:** `GoSub CleanUp` が `paren_less_call` として parse される (GoSub が identifier 扱い)
+- **GREEN:** `gosub_statement` ルール追加 + `tree-sitter generate` で corpus テスト通過
+- **highlight:** `gosub.bas` fixture 追加 (7 assertions green)
+
+### probe 結果 (B: locals.scm 解除)
+- GitHub: tree-sitter v0.26.8 リリース済み
+- npm: `tree-sitter-cli@0.26.8` 利用可能
+- 制約: `package.json` の `devDependencies` が `^0.25.0` (semver で 0.26.x は範囲外)
+- 判断: upgrade は単独 Sprint として切り出す (既存 green を壊さないよう慎重に)
+
+### Sprint 1 レトロスペクティブ (KPT)
+
+#### Keep
+- `goto_statement` と同パターンであることを grep で先に確認 → 実装 1 行で完結
+- RED → GREEN → highlight fixture の TDD 順序を厳守したことで差分が最小
+
+#### Problem
+- `GoSub CleanUp` が ERROR でなく `paren_less_call` として parse される挙動は直感に反する → grammar に keyword が未登録の場合は identifier として fallback するパターンを先に probe すべき
+
+#### Try
+- `Implements ClassName` grammar 追加 (module scope, 1 行 statement — XS)
+- tree-sitter-cli を 0.26.x に upgrade して locals.scm のバグを確認 (専用 Sprint)
