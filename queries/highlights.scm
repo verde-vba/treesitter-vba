@@ -77,10 +77,13 @@
 (preprocessor_const
   name: (identifier) @variable)
 
+; Preprocessor condition identifiers are compile-time constants in VBA
+; (e.g. VBA7, Win64, user-defined #Const). Compound conditions are highlighted
+; via the generic operator/identifier/literal rules later in this file.
 (preprocessor_if
-  condition: (_) @expression)
+  condition: (identifier) @constant)
 
-(preprocessor_if
+(preprocessor_elseif
   condition: (identifier) @constant)
 
 ; Punctuation

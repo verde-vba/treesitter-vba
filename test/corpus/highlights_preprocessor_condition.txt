@@ -1,0 +1,70 @@
+; regression test for Task C (highlights.scm @expression narrowing)
+; Locks in the parse structure relied upon by the @constant captures on
+; preprocessor_if / preprocessor_elseif conditions.
+
+==================
+Preprocessor #If with identifier condition
+==================
+
+#If DEBUG_MODE Then
+    Dim x As Long
+#End If
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_if
+      condition: (identifier)
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (builtin_type))))))
+
+==================
+Preprocessor #If with binary condition of identifiers
+==================
+
+#If VBA7 And Win64 Then
+    Dim x As LongPtr
+#End If
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_if
+      condition: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (builtin_type))))))
+
+==================
+Preprocessor #ElseIf with identifier condition
+==================
+
+#If VBA7 Then
+    Dim x As LongPtr
+#ElseIf DEBUG_MODE Then
+    Dim x As Long
+#End If
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_if
+      condition: (identifier)
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (builtin_type)))
+      (preprocessor_elseif
+        condition: (identifier)
+        (variable_declaration
+          (variable_declarator
+            name: (identifier)
+            type: (builtin_type)))))))
