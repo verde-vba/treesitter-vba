@@ -1,0 +1,37 @@
+==================
+Declare PtrSafe Function without Alias
+==================
+
+Public Declare PtrSafe Function GetTickCount Lib "kernel32" () As Long
+
+---
+
+(source_file
+  (declare_statement
+    visibility: (visibility)
+    name: (identifier)
+    lib: (string_literal)
+    parameters: (parameter_list)
+    return_type: (builtin_type)))
+
+==================
+Declare PtrSafe Sub with Alias
+==================
+
+Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByVal Length As Long)
+
+---
+
+(source_file
+  (declare_statement
+    visibility: (visibility)
+    name: (identifier)
+    lib: (string_literal)
+    alias: (string_literal)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (identifier))
+      (parameter
+        name: (identifier)
+        type: (builtin_type)))))
