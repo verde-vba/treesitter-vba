@@ -28,6 +28,9 @@
 
 (builtin_type) @type.builtin
 
+(ptr_safe) @keyword
+(preserve) @keyword
+
 ; Declarations
 (sub_declaration name: (identifier) @function)
 (function_declaration name: (identifier) @function)

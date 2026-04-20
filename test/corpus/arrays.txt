@@ -18,21 +18,25 @@ End Sub
       (variable_declaration
         (variable_declarator
           name: (identifier)
-          (literal (integer_literal))
+          (array_bound
+            (literal (integer_literal)))
           type: (builtin_type)))
       (variable_declaration
         (variable_declarator
           name: (identifier)
-          (literal (integer_literal))
-          (literal (integer_literal))
+          (array_bound
+            lower: (literal (integer_literal))
+            upper: (literal (integer_literal)))
           type: (builtin_type)))
       (variable_declaration
         (variable_declarator
           name: (identifier)
-          (literal (integer_literal))
-          (literal (integer_literal))
-          (literal (integer_literal))
-          (literal (integer_literal))
+          (array_bound
+            lower: (literal (integer_literal))
+            upper: (literal (integer_literal)))
+          (array_bound
+            lower: (literal (integer_literal))
+            upper: (literal (integer_literal)))
           type: (builtin_type))))))
 
 ==================
@@ -54,11 +58,14 @@ End Sub
       (redim_statement
         (variable_declarator
           name: (identifier)
-          (literal (integer_literal))))
+          (array_bound
+            (literal (integer_literal)))))
       (redim_statement
+        preserve: (preserve)
         (variable_declarator
           name: (identifier)
-          (literal (integer_literal)))))))
+          (array_bound
+            (literal (integer_literal))))))))
 
 ==================
 Type with array field
@@ -76,8 +83,10 @@ End Type
     name: (identifier)
     (type_field
       name: (identifier)
-      (literal (integer_literal))
-      (literal (integer_literal))
-      (literal (integer_literal))
-      (literal (integer_literal))
+      (array_bound
+        lower: (literal (integer_literal))
+        upper: (literal (integer_literal)))
+      (array_bound
+        lower: (literal (integer_literal))
+        upper: (literal (integer_literal)))
       type: (builtin_type))))

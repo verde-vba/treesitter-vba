@@ -152,7 +152,7 @@ module.exports = grammar({
       seq(
         optional(field('visibility', $._visibility)),
         kw('Declare'),
-        optional(kw('PtrSafe')),
+        optional(field('ptr_safe', $.ptr_safe)),
         choice(kw('Sub'), kw('Function')),
         field('name', $.identifier),
         kw('Lib'),
@@ -161,6 +161,8 @@ module.exports = grammar({
         optional(field('parameters', $.parameter_list)),
         optional(seq(kw('As'), field('return_type', $._type_name))),
       ),
+
+    ptr_safe: (_) => kw('PtrSafe'),
 
     parameter_list: ($) => seq('(', optional(commaSep1($.parameter)), ')'),
 
@@ -194,8 +196,14 @@ module.exports = grammar({
     _array_bounds: ($) =>
       seq(
         '(',
-        optional(commaSep1(choice($._expression, seq($._expression, kw('To'), $._expression)))),
+        optional(commaSep1($.array_bound)),
         ')',
+      ),
+
+    array_bound: ($) =>
+      choice(
+        seq(field('lower', $._expression), kw('To'), field('upper', $._expression)),
+        $._expression,
       ),
 
     const_declaration: ($) =>
@@ -477,9 +485,11 @@ module.exports = grammar({
     redim_statement: ($) =>
       seq(
         kw('ReDim'),
-        optional(kw('Preserve')),
+        optional(field('preserve', $.preserve)),
         commaSep1($.variable_declarator),
       ),
+
+    preserve: (_) => kw('Preserve'),
 
     set_statement: ($) =>
       seq(

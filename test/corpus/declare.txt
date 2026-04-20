@@ -9,6 +9,7 @@ Public Declare PtrSafe Function GetTickCount Lib "kernel32" () As Long
 (source_file
   (declare_statement
     visibility: (visibility)
+    ptr_safe: (ptr_safe)
     name: (identifier)
     lib: (string_literal)
     parameters: (parameter_list)
@@ -25,6 +26,7 @@ Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByR
 (source_file
   (declare_statement
     visibility: (visibility)
+    ptr_safe: (ptr_safe)
     name: (identifier)
     lib: (string_literal)
     alias: (string_literal)
