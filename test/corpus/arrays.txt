@@ -1,0 +1,83 @@
+==================
+Dim with fixed and ranged bounds
+==================
+
+Sub M()
+    Dim fixed(10) As Long
+    Dim bounded(1 To 10) As String
+    Dim multi(1 To 3, 1 To 4) As Double
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          (literal (integer_literal))
+          type: (builtin_type)))
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          (literal (integer_literal))
+          (literal (integer_literal))
+          type: (builtin_type)))
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          (literal (integer_literal))
+          (literal (integer_literal))
+          (literal (integer_literal))
+          (literal (integer_literal))
+          type: (builtin_type))))))
+
+==================
+ReDim Preserve
+==================
+
+Sub M()
+    ReDim arr(10)
+    ReDim Preserve arr(20)
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (redim_statement
+        (variable_declarator
+          name: (identifier)
+          (literal (integer_literal))))
+      (redim_statement
+        (variable_declarator
+          name: (identifier)
+          (literal (integer_literal)))))))
+
+==================
+Type with array field
+==================
+
+Public Type Matrix
+    Data(1 To 3, 1 To 3) As Double
+End Type
+
+---
+
+(source_file
+  (type_declaration
+    visibility: (visibility)
+    name: (identifier)
+    (type_field
+      name: (identifier)
+      (literal (integer_literal))
+      (literal (integer_literal))
+      (literal (integer_literal))
+      (literal (integer_literal))
+      type: (builtin_type))))
