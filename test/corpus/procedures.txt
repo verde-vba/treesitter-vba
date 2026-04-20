@@ -96,3 +96,22 @@ End Property
       (assignment
         target: (identifier)
         value: (identifier)))))
+
+==================
+Library-qualified type in parameter
+==================
+
+Sub Bar(ByVal item As Excel.Range)
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (qualified_name
+          library: (identifier)
+          name: (identifier))))))
