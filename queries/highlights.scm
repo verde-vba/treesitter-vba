@@ -63,8 +63,10 @@
 (paren_less_call function: (identifier) @function.call)
 (paren_less_call function: (member_access property: (identifier) @function.method))
 
-; Labels (GoSub target and label_declaration name)
+; Labels (GoSub/GoTo/On Error GoTo targets and label declarations)
 (gosub_statement target: (identifier) @label)
+(goto_statement target: (identifier) @label)
+(on_error_statement (identifier) @label)
 (label name: (identifier) @label)
 
 (member_access property: (identifier) @property)
