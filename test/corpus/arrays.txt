@@ -170,3 +170,23 @@ End Sub
           (array_bound
             lower: (literal (integer_literal))
             upper: (identifier)))))))
+
+==================
+Dim with empty array bounds
+==================
+
+Sub S()
+    Dim a() As Variant
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (builtin_type))))))
