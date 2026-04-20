@@ -1,0 +1,60 @@
+; Regression test for Task B (preprocessor_const definition + #If reference).
+; Ensures that a `#Const` declaration followed by a `#If` that references the
+; defined name parses into the shape expected by `queries/locals.scm`, where
+; `preprocessor_const.name` is captured as `@local.definition.constant` and
+; the identifier inside `preprocessor_if.condition` flows through the generic
+; `(identifier) @local.reference` catch-all.
+
+==================
+Preprocessor #Const defined then referenced by #If identifier condition
+==================
+
+#Const DEBUG_MODE = 1
+
+#If DEBUG_MODE Then
+    Dim x As Long
+#End If
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_const
+      name: (identifier)
+      value: (literal
+        (integer_literal))))
+  (preprocessor_directive
+    (preprocessor_if
+      condition: (identifier)
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (builtin_type))))))
+
+==================
+Preprocessor #Const referenced by #If binary condition
+==================
+
+#Const DEBUG_MODE = 1
+
+#If DEBUG_MODE And VBA7 Then
+    Dim y As Long
+#End If
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_const
+      name: (identifier)
+      value: (literal
+        (integer_literal))))
+  (preprocessor_directive
+    (preprocessor_if
+      condition: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (builtin_type))))))
