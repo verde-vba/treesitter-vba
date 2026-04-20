@@ -1,3 +1,7 @@
+; Syntax highlighting captures for VBA.
+; Keyword, operator, literal, and identifier classes follow the
+; nvim-treesitter capture naming conventions.
+
 ; Keywords
 [
   "Sub" "Function" "Property" "End" "Get" "Let" "Set"

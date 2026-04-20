@@ -1,3 +1,6 @@
+; Scope and definition captures for VBA, used by nvim-treesitter's
+; locals module to resolve identifier references within a module.
+
 ; Scopes
 [
   (sub_declaration)
