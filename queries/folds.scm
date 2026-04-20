@@ -15,4 +15,5 @@
   (if_statement)
   (case_clause)
   (case_else_clause)
+  (preprocessor_if)
 ] @fold
