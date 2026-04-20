@@ -299,3 +299,44 @@ Nested preprocessor #If
             (variable_declarator
               name: (identifier)
               type: (builtin_type))))))))
+
+==================
+Preprocessor example: Win64 / VBA7 branching with #Const
+==================
+
+#Const DEBUG_MODE = 1
+
+#If Win64 Then
+    Dim gHandle As LongPtr
+#ElseIf VBA7 Then
+    Dim gHandle As LongPtr
+#Else
+    Dim gHandle As Long
+#End If
+
+---
+
+(source_file
+  (preprocessor_directive
+    (preprocessor_const
+      name: (identifier)
+      value: (literal
+        (integer_literal))))
+  (preprocessor_directive
+    (preprocessor_if
+      condition: (identifier)
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (builtin_type)))
+      (preprocessor_elseif
+        condition: (identifier)
+        (variable_declaration
+          (variable_declarator
+            name: (identifier)
+            type: (builtin_type))))
+      (preprocessor_else
+        (variable_declaration
+          (variable_declarator
+            name: (identifier)
+            type: (builtin_type)))))))

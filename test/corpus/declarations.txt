@@ -128,3 +128,46 @@ Dim x As VBA.Collection.Item
         library: (identifier)
         name: (identifier)
         name: (identifier)))))
+
+==================
+COM reference: Dim with Excel.Application and Scripting.Dictionary
+==================
+
+Sub UseExcel()
+    Dim app As Excel.Application
+    Dim dict As Scripting.Dictionary
+    Set app = New Excel.Application
+    Set dict = New Scripting.Dictionary
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (qualified_name
+            library: (identifier)
+            name: (identifier))))
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (qualified_name
+            library: (identifier)
+            name: (identifier))))
+      (set_statement
+        target: (identifier)
+        value: (new_expression
+          (qualified_name
+            library: (identifier)
+            name: (identifier))))
+      (set_statement
+        target: (identifier)
+        value: (new_expression
+          (qualified_name
+            library: (identifier)
+            name: (identifier)))))))
