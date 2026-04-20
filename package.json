@@ -1,0 +1,47 @@
+{
+  "name": "tree-sitter-vba",
+  "version": "0.1.0",
+  "description": "VBA (Visual Basic for Applications) grammar for tree-sitter",
+  "main": "bindings/node",
+  "keywords": [
+    "parser",
+    "tree-sitter",
+    "vba",
+    "visual-basic"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "node-addon-api": "^7.1.0",
+    "node-gyp-build": "^4.8.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.25.0"
+  },
+  "peerDependencies": {
+    "tree-sitter": "^0.21.1"
+  },
+  "peerDependenciesMeta": {
+    "tree-sitter": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "generate": "tree-sitter generate",
+    "test": "tree-sitter test",
+    "parse": "tree-sitter parse"
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.vba",
+      "file-types": [
+        "bas",
+        "cls",
+        "frm",
+        "vba"
+      ],
+      "highlights": [
+        "queries/highlights.scm"
+      ]
+    }
+  ]
+}

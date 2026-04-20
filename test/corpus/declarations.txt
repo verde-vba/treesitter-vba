@@ -1,0 +1,83 @@
+==================
+Dim with type
+==================
+
+Sub Main()
+    Dim n As Long, s As String
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          type: (builtin_type))
+        (variable_declarator
+          name: (identifier)
+          type: (builtin_type))))))
+
+==================
+Const
+==================
+
+Public Const PI As Double = 3.14
+
+---
+
+(source_file
+  (const_declaration
+    visibility: (visibility)
+    name: (identifier)
+    type: (builtin_type)
+    value: (literal (float_literal))))
+
+==================
+Type block
+==================
+
+Public Type Point
+    X As Long
+    Y As Long
+End Type
+
+---
+
+(source_file
+  (type_declaration
+    visibility: (visibility)
+    name: (identifier)
+    (type_field
+      name: (identifier)
+      type: (builtin_type))
+    (type_field
+      name: (identifier)
+      type: (builtin_type))))
+
+==================
+Enum block
+==================
+
+Public Enum Color
+    Red = 1
+    Green
+    Blue
+End Enum
+
+---
+
+(source_file
+  (enum_declaration
+    visibility: (visibility)
+    name: (identifier)
+    (enum_member
+      name: (identifier)
+      value: (literal (integer_literal)))
+    (enum_member
+      name: (identifier))
+    (enum_member
+      name: (identifier))))

@@ -1,0 +1,98 @@
+==================
+Empty sub
+==================
+
+Sub Hello()
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)))
+
+==================
+Sub with parameters
+==================
+
+Public Sub Greet(ByVal name As String, Optional title As String = "Mr.")
+    MsgBox("Hello, " & title & " " & name)
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    visibility: (visibility)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (builtin_type))
+      (parameter
+        name: (identifier)
+        type: (builtin_type)
+        default: (literal (string_literal))))
+    body: (statement_block
+      (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (binary_expression
+            left: (binary_expression
+              left: (binary_expression
+                left: (literal (string_literal))
+                right: (identifier))
+              right: (literal (string_literal)))
+            right: (identifier)))))))
+
+==================
+Function with return type
+==================
+
+Private Function Add(a As Long, b As Long) As Long
+    Add = a + b
+End Function
+
+---
+
+(source_file
+  (function_declaration
+    visibility: (visibility)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (builtin_type))
+      (parameter
+        name: (identifier)
+        type: (builtin_type)))
+    return_type: (builtin_type)
+    body: (statement_block
+      (assignment
+        target: (identifier)
+        value: (binary_expression
+          left: (identifier)
+          right: (identifier))))))
+
+==================
+Property Get
+==================
+
+Public Property Get Name() As String
+    Name = mName
+End Property
+
+---
+
+(source_file
+  (property_declaration
+    visibility: (visibility)
+    accessor: (accessor)
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (builtin_type)
+    body: (statement_block
+      (assignment
+        target: (identifier)
+        value: (identifier)))))

@@ -1,0 +1,54 @@
+==================
+Literal kinds
+==================
+
+Sub Main()
+    a = 123
+    b = &HFF
+    c = 1.5e-3
+    d = "He said ""hi"""
+    e = #2024-01-31#
+    f = True
+    g = Nothing
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (assignment target: (identifier) value: (literal (integer_literal)))
+      (assignment target: (identifier) value: (literal (hex_literal)))
+      (assignment target: (identifier) value: (literal (float_literal)))
+      (assignment target: (identifier) value: (literal (string_literal)))
+      (assignment target: (identifier) value: (literal (date_literal)))
+      (assignment target: (identifier) value: (literal (boolean_literal)))
+      (assignment target: (identifier) value: (literal (nothing_literal))))))
+
+==================
+Comments and line continuation
+==================
+
+' header comment
+Sub Main()
+    Rem legacy style
+    a = 1 + _
+        2
+End Sub
+
+---
+
+(source_file
+  (comment)
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    (comment)
+    body: (statement_block
+      (assignment
+        target: (identifier)
+        value: (binary_expression
+          left: (literal (integer_literal))
+          right: (literal (integer_literal)))))))

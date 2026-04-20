@@ -1,0 +1,87 @@
+==================
+Parenthesized call
+==================
+
+Sub M()
+    Debug.Print(x)
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (call_expression
+        function: (member_access
+          object: (identifier)
+          property: (identifier))
+        arguments: (argument_list
+          (identifier))))))
+
+==================
+Paren-less call with member target
+==================
+
+Sub M()
+    Debug.Print "hi"
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (paren_less_call
+        function: (member_access
+          object: (identifier)
+          property: (identifier))
+        arguments: (paren_less_argument_list
+          (literal (string_literal)))))))
+
+==================
+Paren-less call with multiple args
+==================
+
+Sub M()
+    MsgBox "a", vbOK
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (paren_less_call
+        function: (identifier)
+        arguments: (paren_less_argument_list
+          (literal (string_literal))
+          (identifier))))))
+
+==================
+Named argument
+==================
+
+Sub M()
+    CreateFoo name:="bob", age:=30
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (paren_less_call
+        function: (identifier)
+        arguments: (paren_less_argument_list
+          name: (identifier)
+          value: (literal (string_literal))
+          name: (identifier)
+          value: (literal (integer_literal)))))))

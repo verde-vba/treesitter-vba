@@ -1,0 +1,211 @@
+==================
+If / ElseIf / Else
+==================
+
+Sub Main()
+    If x > 0 Then
+        a = 1
+    ElseIf x = 0 Then
+        a = 0
+    Else
+        a = -1
+    End If
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (if_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (literal (integer_literal)))
+        consequence: (statement_block
+          (assignment
+            target: (identifier)
+            value: (literal (integer_literal))))
+        elseif_condition: (binary_expression
+          left: (identifier)
+          right: (literal (integer_literal)))
+        elseif_body: (statement_block
+          (assignment
+            target: (identifier)
+            value: (literal (integer_literal))))
+        alternative: (statement_block
+          (assignment
+            target: (identifier)
+            value: (unary_expression
+              operand: (literal (integer_literal)))))))))
+
+==================
+For / Next loop
+==================
+
+Sub Main()
+    For i = 1 To 10 Step 2
+        Total = Total + i
+    Next i
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (for_statement
+        variable: (identifier)
+        start: (literal (integer_literal))
+        end: (literal (integer_literal))
+        step: (literal (integer_literal))
+        body: (statement_block
+          (assignment
+            target: (identifier)
+            value: (binary_expression
+              left: (identifier)
+              right: (identifier))))
+        (identifier)))))
+
+==================
+For Each
+==================
+
+Sub Main()
+    For Each cell In rng
+        Debug.Print(cell.Value)
+    Next
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (for_each_statement
+        variable: (identifier)
+        collection: (identifier)
+        body: (statement_block
+          (call_expression
+            function: (member_access
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (member_access
+                object: (identifier)
+                property: (identifier)))))))))
+
+==================
+Do While ... Loop
+==================
+
+Sub Main()
+    Do While n > 0
+        n = n - 1
+    Loop
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (do_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (literal (integer_literal)))
+        body: (statement_block
+          (assignment
+            target: (identifier)
+            value: (binary_expression
+              left: (identifier)
+              right: (literal (integer_literal)))))))))
+
+==================
+Select Case
+==================
+
+Sub Main()
+    Select Case x
+        Case 1, 2
+            a = "small"
+        Case 3 To 10
+            a = "mid"
+        Case Is > 10
+            a = "big"
+        Case Else
+            a = "?"
+    End Select
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (select_statement
+        subject: (identifier)
+        (case_clause
+          (literal (integer_literal))
+          (literal (integer_literal))
+          body: (statement_block
+            (assignment
+              target: (identifier)
+              value: (literal (string_literal)))))
+        (case_clause
+          (literal (integer_literal))
+          (literal (integer_literal))
+          body: (statement_block
+            (assignment
+              target: (identifier)
+              value: (literal (string_literal)))))
+        (case_clause
+          (literal (integer_literal))
+          body: (statement_block
+            (assignment
+              target: (identifier)
+              value: (literal (string_literal)))))
+        (case_else_clause
+          body: (statement_block
+            (assignment
+              target: (identifier)
+              value: (literal (string_literal)))))))))
+
+==================
+With block
+==================
+
+Sub Main()
+    With obj
+        .Name = "a"
+        .Value = 1
+    End With
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (with_statement
+        object: (identifier)
+        body: (statement_block
+          (assignment
+            target: (leading_dot_member_access
+              property: (identifier))
+            value: (literal (string_literal)))
+          (assignment
+            target: (leading_dot_member_access
+              property: (identifier))
+            value: (literal (integer_literal))))))))
