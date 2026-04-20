@@ -675,3 +675,65 @@ End Function
 
 **判定: 達成** — XS 2 件、2 commit 構成で完了。
 
+---
+
+## Phase 3 Sprint 6 (parser.dylib .gitignore + @label 昇格) 完了記録 (2026-04-21)
+
+### Sprint Goal
+tree-sitter highlights の label capture を `@variable` から `@label` に昇格させ、GoSub ターゲット・ラベル定義の意味論上の区別を明確化。あわせて `parser.dylib` を `.gitignore` に追加する chore を消化。
+
+### 実施内容
+
+| 変更 | 詳細 |
+|------|------|
+| `.gitignore` | `*.dylib` / `*.so` / `*.dll` を追加 (既存 `*.wasm` の隣に 3 プラットフォーム分) |
+| `queries/highlights.scm` | `(gosub_statement target: (identifier) @label)` + `(label name: (identifier) @label)` 追加 |
+| `test/highlight/gosub_return.bas` | `@variable` → `@label` に assertion 更新 (7 assertions) |
+
+### probe 結果 (事前確認)
+
+**grammar.js フィールド名の確認:**
+- `gosub_statement` → `target:` フィールド (直感的な `label:` ではなく `target`)
+- `label` rule → `name:` フィールド、`prec(1, ...)` で宣言
+
+**highlights.scm last-wins 挙動:**
+- `(identifier) @variable` は catch-all として早期に定義済み
+- 後に定義した `(gosub_statement target: (identifier) @label)` / `(label name: (identifier) @label)` が last-wins で勝つ
+
+**テスト挙動の観察:**
+- highlight テスト失敗時の終了コード: **137** (他ファイルは通るが失敗ファイルが表示されずに終了)
+- tree-sitter 0.25.10 で確認 (0.27+ 待ちの locals バグとは別事象)
+
+### TDD サイクル記録
+- **RED:** `gosub_return.bas` の assertion を `@label` 期待に書き換え → EXIT 137 で失敗確認
+- **GREEN:** `highlights.scm` に 2 capture 追加 → EXIT 0、corpus 72/72 ✓、highlight 6 ファイル ✓
+- **stash 実験:** 元ファイルで EXIT 0 を確認 → RED が my change によるものと証明
+
+### Sprint 6 レトロスペクティブ (KPT)
+
+#### Keep
+- grammar.js の field 名を `grep` で先に確認 (`target:` vs `label:`) → ハマりを回避
+- stash を使って「変更前は通る」を実証 → RED の原因を明確に切り分けできた
+
+#### Problem
+- highlight テスト失敗時に失敗メッセージが表示されず EXIT 137 のみ → どのアサーションが失敗したか分かりにくい (tree-sitter 0.25.10 の挙動)
+
+#### Try (Phase 3 Sprint 7 候補)
+- **★筆頭 (upstream 待ち):** tree-sitter 0.27+ リリース時に locals runner 修正を再確認 → `test/locals/basics.bas` 復活
+- `DefType` 特殊ケース補強: `DefBool` / `DefDate` 等の複数レンジ組み合わせ fixture 追加
+- `On Error GoTo` ラベルも `(goto_statement target: (identifier) @label)` で昇格させるか検討 (grammar.js の node 名を probe してから判断)
+- highlight テスト失敗時の詳細出力を得る方法を調査 (tree-sitter 0.26.x / 0.27+ で改善されているか確認)
+
+### 完了判定
+
+| 完了基準 | 状態 |
+|----------|------|
+| corpus 72 件 ✓ | ✅ |
+| highlight 6 ファイル ✓ (変化なし) | ✅ |
+| `gosub_return.bas` assertions `@label` 期待で green | ✅ 7 assertions |
+| `.gitignore` に `*.dylib` / `*.so` / `*.dll` 追加 | ✅ |
+| `git status` clean | ✅ |
+| 3 commit 構成 (chore + feat + docs) | ✅ |
+
+**判定: 達成** — chore XS + feat XS の 2 件、3 commit 構成で完了。
+
