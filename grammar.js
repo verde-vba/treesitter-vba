@@ -83,6 +83,8 @@ module.exports = grammar({
         $.attribute_stmt,
         $.option_stmt,
         $.implements_statement,
+        $.def_type_statement,
+        $.event_declaration,
         $._declaration,
         $.preprocessor_directive,
       ),
@@ -117,6 +119,30 @@ module.exports = grammar({
 
     implements_statement: ($) =>
       seq(kw('Implements'), field('name', choice($.qualified_name, $.identifier))),
+
+    def_type_statement: ($) =>
+      seq(
+        choice(
+          kw('DefBool'), kw('DefByte'), kw('DefCur'), kw('DefDate'), kw('DefDbl'),
+          kw('DefDec'), kw('DefInt'), kw('DefLng'), kw('DefLngLng'), kw('DefLngPtr'),
+          kw('DefObj'), kw('DefSng'), kw('DefStr'), kw('DefVar'),
+        ),
+        commaSep1($.letter_range),
+      ),
+
+    letter_range: ($) =>
+      seq(
+        field('start', $.identifier),
+        optional(seq('-', field('end', $.identifier))),
+      ),
+
+    event_declaration: ($) =>
+      seq(
+        optional(field('visibility', $._visibility)),
+        kw('Event'),
+        field('name', $.identifier),
+        field('parameters', $.parameter_list),
+      ),
 
     // ─── Preprocessor directives ──────────────────────────────────────
     //
