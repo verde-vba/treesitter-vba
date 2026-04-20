@@ -31,6 +31,11 @@
 (ptr_safe) @keyword
 (preserve) @keyword
 
+; Generic identifier catch-all — must appear BEFORE specific identifier
+; rules because tree-sitter highlights use last-wins semantics: a later
+; pattern index overrides an earlier one for the same node position.
+(identifier) @variable
+
 ; Declarations
 (sub_declaration name: (identifier) @function)
 (function_declaration name: (identifier) @function)
@@ -93,5 +98,3 @@
 (qualified_name
   library: (identifier) @namespace
   name: (identifier) @type)
-
-(identifier) @variable
