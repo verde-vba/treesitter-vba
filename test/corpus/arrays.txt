@@ -140,3 +140,33 @@ End Sub
             lower: (literal (integer_literal))
             upper: (literal (integer_literal)))
           type: (builtin_type))))))
+
+==================
+ReDim Preserve with mixed-form multi-dimensional bounds
+==================
+
+Sub S()
+    ReDim Preserve arr(1 To n, 10), buf(0 To k)
+End Sub
+
+---
+
+(source_file
+  (sub_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (statement_block
+      (redim_statement
+        preserve: (preserve)
+        (variable_declarator
+          name: (identifier)
+          (array_bound
+            lower: (literal (integer_literal))
+            upper: (identifier))
+          (array_bound
+            (literal (integer_literal))))
+        (variable_declarator
+          name: (identifier)
+          (array_bound
+            lower: (literal (integer_literal))
+            upper: (identifier)))))))
