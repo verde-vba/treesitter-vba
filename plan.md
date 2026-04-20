@@ -245,6 +245,45 @@ nvim-treesitter-textobjects プラグイン対応。
 - `with_blocks.bas` の `With` ブロック内プロパティが `@variable` にフォールバックしている箇所を `@property` に修正。
 - `highlights.scm` でキャプチャ順を調整し、`leading_dot_member_access` の property を優先。
 
+#### probe 結果 (2026-04-21)
+
+**観測手順:** `tree-sitter query queries/highlights.scm /tmp/probe_vba.bas` で全キャプチャを出力
+
+**観測データ (`.Bar = 1` の `Bar`):**
+```
+pattern: 20  capture: 6  - property, start: (2, 9), end: (2, 12)  Bar
+pattern: 39  capture: 17 - variable, start: (2, 9), end: (2, 12)  Bar
+```
+
+**観測データ (`Sub Foo()` の `Foo`):**
+```
+pattern: 5   capture: 3  - function, start: (0, 3), end: (0, 7)   Foo
+pattern: 39  capture: 17 - variable, start: (0, 3), end: (0, 7)   Foo
+```
+
+**確定した優先度モデル: _後着優先 (last-wins)_ — 同一ノードに複数のキャプチャが当たった場合、pattern index が最も高いものが勝つ。**
+
+- `(identifier) @variable` は pattern 39 (ファイル末尾) であり、全ての identifier に対して pattern 5〜20 のより具体的なルールを上書きする。
+- これは `with_blocks.bas` の `.PropName` だけでなく、**手続き名 (`@function`), 定数名 (`@constant`), 型名 (`@type`), フィールド名 (`@property`) を含む全識別子キャプチャに及ぶ**。
+- `types.bas` の `X` → `@variable`, `declarations.bas` の `MAX_SIZE` → `@variable`, `basics.vba` の `HelloWorld` → `@variable` がすべて同一原因で説明される。
+
+**影響範囲:**
+- Pattern 5–8: `@function` (手続き名) → `@variable` にフォールバック
+- Pattern 9: `@variable.parameter` → `@variable` にフォールバック
+- Pattern 10–11: `@type` (型名, enum 名) → `@variable` にフォールバック
+- Pattern 12: `@property` (type フィールド) → `@variable` にフォールバック
+- Pattern 13–14: `@constant` (enum 値, const 名) → `@variable` にフォールバック
+- Pattern 15–18: `@function.call` / `@function.method` → (call_expression の場合は呼び出しノードが異なるため影響軽微)
+- Pattern 19–20: `@property` (member_access, leading_dot) → `@variable` にフォールバック
+
+**修正方針 (次サイクルで実施):**
+`(identifier) @variable` を `highlights.scm` の **最初のキャプチャ** (keywords ブロックの直後、pattern index を低くする) に移動する。具体的に言うと、identifier を catch-all する行を pattern 2〜3 相当の位置に置き、その後ろに全ての具体的識別子ルール (function / property / constant など) を配置することで後着優先モデルを活用する。
+
+**後続作業:**
+1. `highlights.scm` で `(identifier) @variable` を先頭グループ直後に移動
+2. `with_blocks.bas` / `types.bas` / `declarations.bas` / `basics.vba` のアサーションを正しい capture 名に更新
+3. `tree-sitter test` 全件グリーンを確認
+
 ---
 
 ## Phase 2 進捗 (2026-04-21)
@@ -252,7 +291,7 @@ nvim-treesitter-textobjects プラグイン対応。
 | ステップ | 状態 | 内容 |
 |----------|------|------|
 | upstream issue 草稿 | ✅ 完了 | `cli/src/main.rs` query_path バグを再現手順・根本原因・最小再現ケース付きで plan.md に記録 |
-| (E) fixture priority 修正 | 🔲 保留 | probe なしで `leading_dot_member_access` の捕捉順問題を断定できないため次サイクルに持越し |
+| (E) fixture priority 修正 | 🔬 probe 完了 | last-wins モデル確定。`(identifier) @variable` (pattern 39) が全識別子を上書き。修正方針: catch-all を先頭移動し具体的ルールを後置 |
 | (D) corpus 拡充 | 🟡 部分完了 | Nested With / Enum 値式 (`Or` binary_expression) / Declare legacy (PtrSafe なし) を追加。54→57 件 |
 | (A) locals.scm | 🔲 ブロック | tree-sitter 0.25.10 バグにより `test/locals/` テスト不可 — 0.26+ 待ち |
 
