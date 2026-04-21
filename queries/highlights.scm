@@ -56,6 +56,9 @@
 (implements_statement name: (identifier) @type)
 (event_declaration name: (identifier) @function)
 (variable_declarator type: (identifier) @type)
+(variable_declaration
+  "WithEvents"
+  (variable_declarator name: (identifier) @variable.other.member))
 
 ; Calls
 (call_expression function: (identifier) @function.call)
