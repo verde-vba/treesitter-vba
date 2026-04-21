@@ -27,8 +27,11 @@ jobs:
           version: 3.1.64
       - name: Build WASM
         run: tree-sitter build --wasm --output tree-sitter-vba.wasm
-      - name: Run tests (smoke)
-        run: tree-sitter test
+      # Grammar validation lives in CI (.github/workflows/ci.yml)
+      # where `tree-sitter test` + `cargo test` run across 3 OSes.
+      # `tree-sitter build --wasm` above is itself a generate+compile
+      # smoke; duplicating `tree-sitter test` here hits the known
+      # tree-sitter-cli 0.26 locals-runner OOM until 0.27 lands.
       - uses: actions/upload-artifact@v4
         with:
           name: tree-sitter-vba-wasm
