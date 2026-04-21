@@ -4,6 +4,9 @@ Sub Foo()
     On Error GoTo ErrorHandler
 '             ^ @keyword.exception
 '                  ^ @label
+    On Error GoTo 0
+'             ^ @keyword.exception
+'                 ^ @number
     On Error Resume Next
 Done:
 ' <- @label
