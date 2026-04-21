@@ -63,7 +63,8 @@
 (paren_less_call function: (identifier) @function.call)
 (paren_less_call function: (member_access property: (identifier) @function.method))
 
-; error handling — Next target in Resume Next, and label in standalone Resume
+; error handling — GoTo/Next in On Error context, and label in standalone Resume
+(on_error_statement "GoTo" @keyword.exception)
 (on_error_statement "Next" @keyword.exception)
 (resume_statement "Next" @keyword.exception)
 (resume_statement (identifier) @label)
